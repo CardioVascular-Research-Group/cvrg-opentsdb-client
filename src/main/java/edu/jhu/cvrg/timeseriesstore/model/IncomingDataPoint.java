@@ -62,7 +62,6 @@ public class IncomingDataPoint {
   public IncomingDataPoint(final String metric,
       final long timestamp,
       final String value,
-//      final int value,
       final HashMap<String, String> tags) {
     this.metric = metric;
     this.timestamp = timestamp;
@@ -79,7 +78,6 @@ public class IncomingDataPoint {
   public IncomingDataPoint(final String tsuid,
       final long timestamp,
       final String value) {
-//      final int value) {
     this.tsuid = tsuid;
     this.timestamp = timestamp;
     this.value = value;
@@ -112,11 +110,6 @@ public class IncomingDataPoint {
     return timestamp;
   }
 
-//  /** @return the value */
-//  public final String getValue() {
-//    return value;
-//  }
-  
 public final float getValue() {
 return Float.valueOf(value);
 }
@@ -145,9 +138,6 @@ return Float.valueOf(value);
   public final void setValue(String value) {
     this.value = value;
   }
-//  public final void setValue(int value) {
-//	    this.value = value;
-//	  }
 
   /** @param tags the tags to set */
   public final void setTags(HashMap<String, String> tags) {

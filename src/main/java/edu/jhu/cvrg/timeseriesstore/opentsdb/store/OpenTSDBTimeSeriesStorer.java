@@ -18,14 +18,8 @@ limitations under the License.
 * @author Chris Jurado, Stephen Granite
 * 
 */
-import java.io.IOException;
 import java.io.InputStream;
-import java.io.OutputStreamWriter;
-import java.net.HttpURLConnection;
 import java.util.ArrayList;
-import java.util.Date;
-
-import com.google.gson.Gson;
 
 import edu.jhu.cvrg.timeseriesstore.model.IncomingDataPoint;
 import edu.jhu.cvrg.timeseriesstore.util.TimeSeriesUtility;
@@ -40,7 +34,6 @@ public abstract class OpenTSDBTimeSeriesStorer {
 			ArrayList<IncomingDataPoint> points = extractTimePoints(inputStream, channels, samples);
 			
 			if(points == null){
-				System.out.println("No data returned. YOU SUCK");
 				return false;
 			}
 			
