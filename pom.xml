@@ -4,7 +4,7 @@
 
 	<groupId>edu.jhu.cvrg</groupId>
 	<artifactId>cvrg-opentsdb-client</artifactId>
-	<version>0.0.1-SNAPSHOT</version>
+	<version>0.0.2-SNAPSHOT</version>
 	<packaging>jar</packaging>
 
 	<name>cvrg-opentsdb-client</name>
@@ -35,6 +35,11 @@
 			<groupId>commons-io</groupId>
 			<artifactId>commons-io</artifactId>
 			<version>2.4</version>
+		</dependency>
+		<dependency>
+			<groupId>junit</groupId>
+			<artifactId>junit</artifactId>
+			<version>4.4</version>
 		</dependency>
 	</dependencies>
 	<repositories>
