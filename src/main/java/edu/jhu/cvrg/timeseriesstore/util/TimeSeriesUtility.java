@@ -38,6 +38,7 @@ import org.json.JSONObject;
 
 import com.google.gson.Gson;
 
+import edu.jhu.cvrg.timeseriesstore.enums.HttpVerbs;
 import edu.jhu.cvrg.timeseriesstore.exceptions.OpenTSDBException;
 import edu.jhu.cvrg.timeseriesstore.model.IncomingDataPoint;
 import edu.jhu.cvrg.timeseriesstore.opentsdb.retrieve.OpenTSDBTimeSeriesRetriever;
@@ -80,7 +81,7 @@ public class TimeSeriesUtility {
 			OutputStreamWriter wr = new OutputStreamWriter(httpConnection.getOutputStream());
 						
 			String json = gson.toJson(points);
-			System.out.println(json.toString());
+
 			wr.write(json);
 			wr.flush();
 			wr.close();
@@ -104,29 +105,40 @@ public class TimeSeriesUtility {
 	
 	public static HttpURLConnection openHTTPConnectionGET(String urlString){
 		
-		return openHTTPConnection(urlString, false);
+		return openHTTPConnection(urlString, HttpVerbs.GET);
 	}
 	
 	public static HttpURLConnection openHTTPConnectionPOST(String urlString){
 	
-		return openHTTPConnection(urlString, true);
+		return openHTTPConnection(urlString, HttpVerbs.POST);
 	}
 	
-	private static HttpURLConnection openHTTPConnection(String urlString, boolean isPost){
+	public static HttpURLConnection openHTTPConnectionPUT(String urlString){
+		
+		return openHTTPConnection(urlString, HttpVerbs.PUT);
+	}
+	
+	private static HttpURLConnection openHTTPConnection(String urlString, HttpVerbs verb){
 		URL url = null;
 		HttpURLConnection conn = null;
 		
 		try {
 			url = new URL(urlString);
 			conn = (HttpURLConnection) url.openConnection();
-			conn.setRequestMethod("GET");
+			
+			switch(verb){
+			case POST:		conn.setRequestMethod("POST");
+							conn.setDoOutput(true);
+							conn.setDoInput(true);				break;
+			case PUT:		conn.setRequestMethod("PUT");		
+							conn.setDoOutput(true);				break;
+			case DELETE:	conn.setRequestMethod("DELETE");	break;
+			default:		conn.setRequestMethod("GET");		break;
+			}
+					
 			conn.setRequestProperty("Accept", "application/json");
 			conn.setRequestProperty("Content-type", "application/json");
-			if(isPost){
-				conn.setRequestMethod("POST");
-				conn.setDoOutput(true);
-				conn.setDoInput(true);
-			}
+
 		} catch (MalformedURLException e) {
 			e.printStackTrace();
 		} catch (IOException e) {
