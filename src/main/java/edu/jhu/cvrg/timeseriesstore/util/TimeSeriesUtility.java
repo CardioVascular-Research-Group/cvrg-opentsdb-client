@@ -48,10 +48,7 @@ public class TimeSeriesUtility {
 	public static long DEFAULT_START_TIME = 1420088400L;//1 January, 2015 00:00:00
 	
 	public static String findTsuid(String urlString, String subjectId, String metric){
-		
-		
 		return findTsuid(urlString, subjectId, metric, DEFAULT_START_TIME);
-
 	}
 	
 	public static String findTsuid(String urlString, String subjectId, String metric, long startTime){
@@ -116,6 +113,11 @@ public class TimeSeriesUtility {
 	public static HttpURLConnection openHTTPConnectionPUT(String urlString){
 		
 		return openHTTPConnection(urlString, HttpVerbs.PUT);
+	}
+	
+	public static HttpURLConnection openHTTPConnectionDELETE(String urlString){
+		
+		return openHTTPConnection(urlString, HttpVerbs.DELETE);
 	}
 	
 	private static HttpURLConnection openHTTPConnection(String urlString, HttpVerbs verb){

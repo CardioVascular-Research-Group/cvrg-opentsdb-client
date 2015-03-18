@@ -20,6 +20,7 @@ limitations under the License.
 */
 import java.io.InputStream;
 import java.util.ArrayList;
+import java.util.HashMap;
 
 import edu.jhu.cvrg.timeseriesstore.model.IncomingDataPoint;
 import edu.jhu.cvrg.timeseriesstore.util.TimeSeriesUtility;
@@ -44,6 +45,22 @@ public abstract class OpenTSDBTimeSeriesStorer {
 			return TimeSeriesUtility.insertDataPoints(urlString, points);
 	}
 	
+	public static void storeTimePoint(String urlString, IncomingDataPoint dataPoint){
+		ArrayList<IncomingDataPoint> point = new ArrayList<IncomingDataPoint>();
+		point.add(dataPoint);
+		
+		TimeSeriesUtility.insertDataPoints(urlString, point);
+	}
+	
+	public static void storeTimePoint(String urlString, String metric, long epochTime, HashMap<String, String> tags){
+		
+		IncomingDataPoint point = new IncomingDataPoint();
+		point.setMetric(metric);
+		point.setTags(tags);
+		point.setTimestamp(epochTime);
+		
+		storeTimePoint(urlString, point);
+	}
 
 	
 	protected String getChannelName(int index, String[] channels){

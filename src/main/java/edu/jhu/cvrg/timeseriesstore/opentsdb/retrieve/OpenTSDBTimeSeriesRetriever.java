@@ -53,8 +53,6 @@ public class OpenTSDBTimeSeriesRetriever{
 			
 			mainObject.put("queries", queryArray);
 			String queryString = mainObject.toString();
-	
-			System.out.println(queryString);
 			
 			wr.write(queryString);
 			wr.flush();
@@ -74,7 +72,7 @@ public class OpenTSDBTimeSeriesRetriever{
 			e.printStackTrace();
 			return null;
 		}
-		System.out.println(result);
+
 		return new JSONArray(result);
 	}
 	
@@ -110,24 +108,32 @@ public class OpenTSDBTimeSeriesRetriever{
 			builder.append("}");
 		}
 		
-		try{		
-			HttpURLConnection httpConnection = TimeSeriesUtility.openHTTPConnectionGET(urlString + builder.toString());
+	
+		HttpURLConnection httpConnection = TimeSeriesUtility.openHTTPConnectionGET(urlString + builder.toString());
 			
-			int HttpResult = httpConnection.getResponseCode(); 
+		return new JSONArray(handleResponse(httpConnection));
+	}
+	
+	private static String handleResponse(HttpURLConnection httpConnection){
 		
-			if(HttpResult == HttpURLConnection.HTTP_OK){
+		String result = "";
+		
+		try{
+			int httpResult = httpConnection.getResponseCode(); 
+			
+			if(httpResult == HttpURLConnection.HTTP_OK){
 				result = TimeSeriesUtility.readHTTPConnection(httpConnection);
 			}else{
-				System.out.println(httpConnection.getResponseMessage() + httpConnection.getResponseCode());  
+				result =  String.valueOf(httpResult);
 			}  
 			
 			httpConnection.disconnect();
 			
 		} catch (IOException e) {
 			e.printStackTrace();
-			return null;
+			result = "";
 		}
-
-		return new JSONArray(result);
+			
+		return result;
 	}
 }
