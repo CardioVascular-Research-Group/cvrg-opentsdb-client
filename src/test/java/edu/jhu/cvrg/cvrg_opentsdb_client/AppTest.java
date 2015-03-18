@@ -62,25 +62,25 @@ public class AppTest
     	assertTrue(description.equals("Test Annotation One"));
     }
     
-    @Test
-    public void testEditAnnotation(){
-    	String tsuid = TimeSeriesUtility.findTsuid(OPENTSDB_URL, "ncc1701E", "ecg.I.uv");
-    	String initial = "initial";
-    	String after = "after";
-
-    	//TODO:  Don't change things that aren't meant to change
-    	JSONObject result = AnnotationManager.queryAnnotation(OPENTSDB_URL, 1420070460L, tsuid);
-    	
-    	initial = result.toString();
-    	
-    	String editResult = AnnotationManager.editAnnotation(OPENTSDB_URL, 1420070460L, 0L, tsuid, "Edited Annotation", "Some notes");
-    	
-    	JSONObject editedResultJSON = AnnotationManager.queryAnnotation(OPENTSDB_URL, 1420070460L, tsuid);
-    	
-    	after = editedResultJSON.toString();
-    	
-    	assertTrue(!initial.equals(after));
-    }
+//    @Test
+//    public void testEditAnnotation(){
+//    	String tsuid = TimeSeriesUtility.findTsuid(OPENTSDB_URL, "ncc1701E", "ecg.I.uv");
+//    	String initial = "initial";
+//    	String after = "after";
+//
+//    	//TODO:  Don't change things that aren't meant to change
+//    	JSONObject result = AnnotationManager.queryAnnotation(OPENTSDB_URL, 1420070460L, tsuid);
+//    	
+//    	initial = result.toString();
+//    	
+//    	String editResult = AnnotationManager.editAnnotation(OPENTSDB_URL, 1420070460L, 0L, tsuid, "Edited Annotation", "Some notes");
+//    	
+//    	JSONObject editedResultJSON = AnnotationManager.queryAnnotation(OPENTSDB_URL, 1420070460L, tsuid);
+//    	
+//    	after = editedResultJSON.toString();
+//    	
+//    	assertTrue(!initial.equals(after));
+//    }
     
     @Test
     public void testPartialEditAnnotation(){
@@ -105,20 +105,20 @@ public class AppTest
     	assertTrue(description.equals("This should not change.") && notes.equals("This changed."));
     }
     
-    @Test
-    public void testDelete(){
-    	String tsuid = TimeSeriesUtility.findTsuid(OPENTSDB_URL, "ncc1701E", "ecg.I.uv");
-
-    	AnnotationManager.createSinglePointAnnotation(OPENTSDB_URL, 1420070485L, tsuid, "Delete me", "Please");
-    	    	
-    	JSONObject result = AnnotationManager.queryAnnotation(OPENTSDB_URL, 1420070485L, tsuid);
-    	
-    	AnnotationManager.deleteAnnotation(OPENTSDB_URL, 1420070485L, tsuid);
-    	
-    	result = AnnotationManager.queryAnnotation(OPENTSDB_URL, 1420070485L, tsuid);
-    	
-    	assertTrue(result == null);
-    }
+//    @Test
+//    public void testDelete(){
+//    	String tsuid = TimeSeriesUtility.findTsuid(OPENTSDB_URL, "ncc1701E", "ecg.I.uv");
+//
+//    	AnnotationManager.createSinglePointAnnotation(OPENTSDB_URL, 1420070485L, tsuid, "Delete me", "Please");
+//    	    	
+//    	JSONObject result = AnnotationManager.queryAnnotation(OPENTSDB_URL, 1420070485L, tsuid);
+//    	
+//    	AnnotationManager.deleteAnnotation(OPENTSDB_URL, 1420070485L, tsuid);
+//    	
+//    	result = AnnotationManager.queryAnnotation(OPENTSDB_URL, 1420070485L, tsuid);
+//    	
+//    	assertTrue(result == null);
+//    }
     
     
 }

@@ -28,10 +28,11 @@ import edu.jhu.cvrg.timeseriesstore.util.TimeSeriesUtility;
 public abstract class OpenTSDBTimeSeriesStorer {
 	
 	private final long DEFAULT_TIME = 1420088400L;//1 January, 2015 00:00:00
+	private static final String API_METHOD = "/api/put";
 
 	public boolean storeTimeSeries(InputStream inputStream, String[] channels, int samples, String urlString, String subjectId){
 
-			urlString = urlString + "/api/put";
+			urlString = urlString + API_METHOD;
 			ArrayList<IncomingDataPoint> points = extractTimePoints(inputStream, channels, samples);
 			
 			if(points == null){
@@ -46,6 +47,7 @@ public abstract class OpenTSDBTimeSeriesStorer {
 	}
 	
 	public static void storeTimePoint(String urlString, IncomingDataPoint dataPoint){
+		urlString = urlString + API_METHOD;
 		ArrayList<IncomingDataPoint> point = new ArrayList<IncomingDataPoint>();
 		point.add(dataPoint);
 		
@@ -53,7 +55,7 @@ public abstract class OpenTSDBTimeSeriesStorer {
 	}
 	
 	public static void storeTimePoint(String urlString, String metric, long epochTime, HashMap<String, String> tags){
-		
+		urlString = urlString + API_METHOD;
 		IncomingDataPoint point = new IncomingDataPoint();
 		point.setMetric(metric);
 		point.setTags(tags);
@@ -61,7 +63,10 @@ public abstract class OpenTSDBTimeSeriesStorer {
 		
 		storeTimePoint(urlString, point);
 	}
-
+	
+	public static void deleteTimePoint(String urlString, String metric, long epochTime){}
+	
+	public static void deleteTimeSeries(String urlString, String tsuid){}
 	
 	protected String getChannelName(int index, String[] channels){
 		return channels[index];
