@@ -1,8 +1,9 @@
-package edu.jhu.cvrg.timeseriesstore.opentsdb.retrieve;
+package edu.jhu.cvrg.timeseriesstore.opentsdb;
 
 import java.io.IOException;
 import java.io.OutputStreamWriter;
 import java.net.HttpURLConnection;
+import java.net.MalformedURLException;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
@@ -10,11 +11,20 @@ import java.util.Map;
 import org.json.JSONArray;
 import org.json.JSONObject;
 
-import edu.jhu.cvrg.timeseriesstore.util.TimeSeriesUtility;
+import edu.jhu.cvrg.timeseriesstore.exceptions.OpenTSDBException;
 
-public class OpenTSDBTimeSeriesRetriever{
+
+public class TimeSeriesRetriever{
 	
 	private static String API_METHOD = "/api/query/";
+	
+	public static String findTsuid(String urlString, String subjectId, String metric){
+		return findTsuid(urlString, subjectId, metric, TimeSeriesUtility.DEFAULT_START_TIME);
+	}
+	
+	public static String findTsuid(String urlString, String subjectId, String metric, long startTime){
+		return TimeSeriesUtility.findTsuid(urlString, subjectId, metric, startTime);
+	}
 		
 	public static JSONArray retrieveTimeSeriesPOST(String urlString, long startEpoch, long endEpoch, String metric, HashMap<String, String> tags, boolean showTSUIDs){
 		      
@@ -28,14 +38,12 @@ public class OpenTSDBTimeSeriesRetriever{
 			JSONObject mainObject = new JSONObject();
 			mainObject.put("start", startEpoch);
 			mainObject.put("end", endEpoch);
-//			mainObject.put("show_tsuids", showTSUIDs);
 			
 			JSONArray queryArray = new JSONArray();
 			
 			JSONObject queryParams = new JSONObject();
 			queryParams.put("aggregator", "sum");
 			queryParams.put("metric", metric);
-//			queryParams.put("showTSUIDs", showTSUIDs);
 	
 			queryArray.put(queryParams);
 
@@ -58,22 +66,16 @@ public class OpenTSDBTimeSeriesRetriever{
 			wr.flush();
 			wr.close();
 
-			int HttpResult = httpConnection.getResponseCode(); 
-		
-			if(HttpResult == HttpURLConnection.HTTP_OK){
-				result = TimeSeriesUtility.readHTTPConnection(httpConnection);
-			}else{
-				System.out.println(httpConnection.getResponseMessage() + httpConnection.getResponseCode());  
-			}  
-			
-			httpConnection.disconnect();
+			result = TimeSeriesUtility.readHttpResponse(httpConnection);
 			
 		} catch (IOException e) {
 			e.printStackTrace();
 			return null;
+		} catch (OpenTSDBException e) {
+			result = String.valueOf(e.responseCode);
 		}
 
-		return new JSONArray(result);
+		return TimeSeriesUtility.makeResponseJSONArray(result);
 	}
 	
 	public static JSONArray retrieveTimeSeriesGET(String urlString, long startEpoch, long endEpoch, String metric, HashMap<String, String> tags, boolean showTSUIDs){
@@ -107,33 +109,19 @@ public class OpenTSDBTimeSeriesRetriever{
 			}
 			builder.append("}");
 		}
-		
-	
-		HttpURLConnection httpConnection = TimeSeriesUtility.openHTTPConnectionGET(urlString + builder.toString());
-			
-		return new JSONArray(handleResponse(httpConnection));
-	}
-	
-	private static String handleResponse(HttpURLConnection httpConnection){
-		
-		String result = "";
-		
-		try{
-			int httpResult = httpConnection.getResponseCode(); 
-			
-			if(httpResult == HttpURLConnection.HTTP_OK){
-				result = TimeSeriesUtility.readHTTPConnection(httpConnection);
-			}else{
-				result =  String.valueOf(httpResult);
-			}  
-			
-			httpConnection.disconnect();
-			
+
+		try {
+			HttpURLConnection httpConnection = TimeSeriesUtility.openHTTPConnectionGET(urlString + builder.toString());
+			result = TimeSeriesUtility.readHttpResponse(httpConnection);
+		} catch (MalformedURLException e) {
+			e.printStackTrace();
 		} catch (IOException e) {
 			e.printStackTrace();
-			result = "";
+		} catch (OpenTSDBException e) {
+			e.printStackTrace();
+			result = String.valueOf(e.responseCode);
 		}
-			
-		return result;
+	
+		return TimeSeriesUtility.makeResponseJSONArray(result);
 	}
 }

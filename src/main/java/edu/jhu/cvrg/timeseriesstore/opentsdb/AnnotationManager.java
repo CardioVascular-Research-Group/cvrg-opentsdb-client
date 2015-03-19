@@ -1,4 +1,4 @@
-package edu.jhu.cvrg.timeseriesstore.opentsdb.annotations;
+package edu.jhu.cvrg.timeseriesstore.opentsdb;
 
 import java.io.IOException;
 import java.io.OutputStreamWriter;
@@ -6,7 +6,7 @@ import java.net.HttpURLConnection;
 
 import org.json.JSONObject;
 
-import edu.jhu.cvrg.timeseriesstore.util.TimeSeriesUtility;
+import edu.jhu.cvrg.timeseriesstore.exceptions.OpenTSDBException;
 
 public class AnnotationManager {
 	
@@ -35,19 +35,14 @@ public class AnnotationManager {
 			wr.write(requestObject.toString());
 			wr.close();
 			
-			int HttpResult = httpConnection.getResponseCode(); 
-		
-			if(HttpResult == HttpURLConnection.HTTP_OK){
-				result = TimeSeriesUtility.readHTTPConnection(httpConnection);
-			}else{
-				System.out.println(httpConnection.getResponseMessage() + httpConnection.getResponseCode());  
-			}  
-			
-			httpConnection.disconnect();
+			result = TimeSeriesUtility.readHttpResponse(httpConnection);
 			
 		} catch (IOException e) {
 			e.printStackTrace();
 			return null;
+		} catch (OpenTSDBException e) {
+			e.printStackTrace();
+			result = String.valueOf(e.responseCode);
 		}
 
 		return result;
@@ -64,26 +59,17 @@ public class AnnotationManager {
 		builder.append(startEpoch);
 		builder.append("&tsuid=");
 		builder.append(tsuid);
-		
-		try{		
+	
+		try {
 			HttpURLConnection httpConnection = TimeSeriesUtility.openHTTPConnectionGET(urlString + builder.toString());
-			
-			int HttpResult = httpConnection.getResponseCode(); 
-		
-			if(HttpResult == HttpURLConnection.HTTP_OK){
-				result = TimeSeriesUtility.readHTTPConnection(httpConnection);
-			}else{
-				System.out.println(httpConnection.getResponseMessage() + httpConnection.getResponseCode());  
-			}  
-			
-			httpConnection.disconnect();
-			
+			result = TimeSeriesUtility.readHttpResponse(httpConnection);
+		} catch (OpenTSDBException e) {
+			result = String.valueOf(e.responseCode);
 		} catch (IOException e) {
 			e.printStackTrace();
-			return null;
 		}
 	
-		return new JSONObject(result);
+		return TimeSeriesUtility.makeResponseJSONObject(result);
 	}
 	
 	public static String editAnnotation(String urlString, long startEpoch, long endEpoch, String tsuid, String description, String notes){
@@ -113,20 +99,12 @@ public class AnnotationManager {
 		
 		try{		
 			HttpURLConnection httpConnection = TimeSeriesUtility.openHTTPConnectionDELETE(urlString + builder.toString());
-			
-			int HttpResult = httpConnection.getResponseCode(); 
-		
-			if(HttpResult == HttpURLConnection.HTTP_OK){
-				result = TimeSeriesUtility.readHTTPConnection(httpConnection);
-			}else{
-				System.out.println(httpConnection.getResponseMessage() + " " + httpConnection.getResponseCode());  
-			}  
-			
-			httpConnection.disconnect();
+			result = TimeSeriesUtility.readHttpResponse(httpConnection);
 			
 		} catch (IOException e) {
 			e.printStackTrace();
-			return null;
+		} catch (OpenTSDBException e) {
+			result = String.valueOf(e.responseCode);
 		}
 	
 		return result;

@@ -1,4 +1,4 @@
-package edu.jhu.cvrg.timeseriesstore.opentsdb.store;
+package edu.jhu.cvrg.timeseriesstore.opentsdb;
 /*
 Copyright 2015 Johns Hopkins University Institute for Computational Medicine
 
@@ -18,40 +18,33 @@ limitations under the License.
 * @author Chris Jurado, Stephen Granite
 * 
 */
-import java.io.InputStream;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
 
+import edu.jhu.cvrg.timeseriesstore.exceptions.OpenTSDBException;
 import edu.jhu.cvrg.timeseriesstore.model.IncomingDataPoint;
-import edu.jhu.cvrg.timeseriesstore.util.TimeSeriesUtility;
 
-public abstract class OpenTSDBTimeSeriesStorer {
-	
-	private final long DEFAULT_TIME = 1420088400L;//1 January, 2015 00:00:00
+public class TimeSeriesStorer {
+
 	private static final String API_METHOD = "/api/put";
-
-	public boolean storeTimeSeries(InputStream inputStream, String[] channels, int samples, String urlString, String subjectId){
-
-			urlString = urlString + API_METHOD;
-			ArrayList<IncomingDataPoint> points = extractTimePoints(inputStream, channels, samples);
-			
-			if(points == null){
-				return false;
-			}
-			
-			for(IncomingDataPoint point : points){
-				point.getTags().put("subjectId", subjectId);
-			}
-			
-			return TimeSeriesUtility.insertDataPoints(urlString, points);
-	}
 	
 	public static void storeTimePoint(String urlString, IncomingDataPoint dataPoint){
+		int responseCode = 0;
 		urlString = urlString + API_METHOD;
 		ArrayList<IncomingDataPoint> point = new ArrayList<IncomingDataPoint>();
 		point.add(dataPoint);
 		
-		TimeSeriesUtility.insertDataPoints(urlString, point);
+		try {
+			responseCode = TimeSeriesUtility.insertDataPoints(urlString, point);
+			if(responseCode > 301 || responseCode == 0){
+				throw new OpenTSDBException(responseCode);
+			}
+		} catch (IOException e) {
+			e.printStackTrace();
+		} catch (OpenTSDBException e) {
+			e.printStackTrace();
+		}
 	}
 	
 	public static void storeTimePoint(String urlString, String metric, long epochTime, HashMap<String, String> tags){
@@ -72,11 +65,4 @@ public abstract class OpenTSDBTimeSeriesStorer {
 		return channels[index];
 	}
 
-	protected ArrayList<IncomingDataPoint> extractTimePoints(InputStream inputStream, String[] channels, int samples){
-
-		return extractTimePoints(inputStream, channels, samples, DEFAULT_TIME);
-		
-	}
-	
-	protected abstract ArrayList<IncomingDataPoint> extractTimePoints(InputStream inputStream, String[] channels, int samples, long epochTime);
 }
