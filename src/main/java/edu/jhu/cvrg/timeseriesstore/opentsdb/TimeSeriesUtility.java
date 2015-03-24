@@ -150,7 +150,7 @@ public class TimeSeriesUtility {
 		}else if(responseCode == 204){
 			result = String.valueOf(responseCode);
 		}else{
-			throw new OpenTSDBException(responseCode); 
+			throw new OpenTSDBException(responseCode, httpConnection.getURL().toString(), ""); 
 		} 
 		httpConnection.disconnect();
 		

@@ -38,7 +38,7 @@ public class TimeSeriesStorer {
 		try {
 			responseCode = TimeSeriesUtility.insertDataPoints(urlString, point);
 			if(responseCode > 301 || responseCode == 0){
-				throw new OpenTSDBException(responseCode);
+				throw new OpenTSDBException(responseCode, urlString, dataPoint.toString());
 			}
 		} catch (IOException e) {
 			e.printStackTrace();
