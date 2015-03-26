@@ -58,7 +58,7 @@ public class AppTest extends TestCase
     	JSONObject object = array.getJSONObject(0);
     	JSONObject data = object.getJSONObject("dps");
     	System.out.println(object.toString());
-    	assertTrue(data.getInt("1420088400L") == 16);
+    	assertTrue(data.getInt("1420088400") == 16);
     }
 
     @Test
