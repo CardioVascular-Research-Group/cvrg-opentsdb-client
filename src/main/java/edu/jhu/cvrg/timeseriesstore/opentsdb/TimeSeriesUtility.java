@@ -58,7 +58,7 @@ public class TimeSeriesUtility {
 		
 		tags.put("subjectId", subjectId);
 		
-		results = TimeSeriesRetriever.retrieveTimeSeriesGET(urlString, startTime, endTime, metric, tags, true);
+		results = TimeSeriesRetriever.retrieveTimeSeries(urlString, startTime, endTime, metric, tags, true);
 		dataObject = results.getJSONObject(0);
 
 		JSONArray tsuids = dataObject.getJSONArray("tsuids");

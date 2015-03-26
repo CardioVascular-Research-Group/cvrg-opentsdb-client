@@ -1,5 +1,22 @@
 package edu.jhu.cvrg.timeseriesstore.opentsdb;
+/*
+Copyright 2015 Johns Hopkins University Institute for Computational Medicine
 
+Licensed under the Apache License, Version 2.0 (the "License");
+you may not use this file except in compliance with the License.
+You may obtain a copy of the License at
+
+http://www.apache.org/licenses/LICENSE-2.0
+
+Unless required by applicable law or agreed to in writing, software
+distributed under the License is distributed on an "AS IS" BASIS,
+WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+See the License for the specific language governing permissions and
+limitations under the License.
+*/
+/**
+* @author Chris Jurado
+*/
 import java.io.IOException;
 import java.io.OutputStreamWriter;
 import java.net.HttpURLConnection;
@@ -13,7 +30,6 @@ import org.json.JSONObject;
 
 import edu.jhu.cvrg.timeseriesstore.exceptions.OpenTSDBException;
 
-
 public class TimeSeriesRetriever{
 	
 	private static String API_METHOD = "/api/query/";
@@ -25,8 +41,16 @@ public class TimeSeriesRetriever{
 	public static String findTsuid(String urlString, String subjectId, String metric, long startTime){
 		return TimeSeriesUtility.findTsuid(urlString, subjectId, metric, startTime);
 	}
-		
-	public static JSONArray retrieveTimeSeriesPOST(String urlString, long startEpoch, long endEpoch, String metric, HashMap<String, String> tags, boolean showTSUIDs){
+	
+	public static JSONArray retrieveTimeSeries(String urlString, long startEpoch, long endEpoch, String metric, HashMap<String, String> tags){
+		return retrieveTimeSeriesPOST(urlString, startEpoch, endEpoch, metric, tags);
+	}
+	      
+	public static JSONArray retrieveTimeSeries(String urlString, long startEpoch, long endEpoch, String metric, HashMap<String, String> tags, boolean showTSUIDs){
+		return retrieveTimeSeriesGET(urlString, startEpoch, endEpoch, metric, tags, showTSUIDs);
+	}
+	
+	private static JSONArray retrieveTimeSeriesPOST(String urlString, long startEpoch, long endEpoch, String metric, HashMap<String, String> tags){
 		      
 		urlString = urlString + API_METHOD;
 		String result = "";
@@ -74,11 +98,10 @@ public class TimeSeriesRetriever{
 		} catch (OpenTSDBException e) {
 			result = String.valueOf(e.responseCode);
 		}
-
 		return TimeSeriesUtility.makeResponseJSONArray(result);
 	}
 	
-	public static JSONArray retrieveTimeSeriesGET(String urlString, long startEpoch, long endEpoch, String metric, HashMap<String, String> tags, boolean showTSUIDs){
+	private static JSONArray retrieveTimeSeriesGET(String urlString, long startEpoch, long endEpoch, String metric, HashMap<String, String> tags, boolean showTSUIDs){
 	
 		urlString = urlString + API_METHOD;
 		String result = "";
@@ -121,7 +144,6 @@ public class TimeSeriesRetriever{
 			e.printStackTrace();
 			result = String.valueOf(e.responseCode);
 		}
-	
 		return TimeSeriesUtility.makeResponseJSONArray(result);
 	}
 }

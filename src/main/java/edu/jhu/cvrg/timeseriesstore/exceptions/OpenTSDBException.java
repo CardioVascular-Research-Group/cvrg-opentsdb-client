@@ -24,9 +24,7 @@ public class OpenTSDBException extends Exception {
 
 	private static final long serialVersionUID = 1L;
 	public int responseCode = 0;
-	private String responseMessage;
 	
-
 	public OpenTSDBException(int responseCode, String urlString, String dataPoint) throws IOException{
 		super("OpenTSDB Error. Code " + responseCode);
 		this.responseCode = responseCode;
@@ -52,10 +50,10 @@ public class OpenTSDBException extends Exception {
 		case 501:	message = code501;	break;
 		case 503:	message = code503;	break;	
 		}
-		
 		return message;
 	}
 	
+	//Messages are from the HTTP api site at http://opentsdb.net/docs/build/html/api_http/index.html
 	private String code400 = "Information provided by the API user, via a query string or content data, was in error or missing. This will usually include information in the error body about what parameter caused the issue. Correct the data and try again.";
 	private String code404 = "The requested endpoint or file was not found. This is usually related to the static file endpoint.";
 	private String code405 = "The requested verb or method was not allowed. Please see the documentation for the endpoint you are attempting to access.";
@@ -65,5 +63,4 @@ public class OpenTSDBException extends Exception {
 	private String code500 = "An internal error occured within OpenTSDB. Make sure all of the systems OpenTSDB depends on are accessible and check the bug list for issues";
 	private String code501 = "The requested feature has not been implemented yet. This may appear with formatters or when calling methods that depend on plugins";
 	private String code503 = "A temporary overload has occurred. Check with other users/applications that are interacting with OpenTSDB and determine if you need to reduce requests or scale your system.";
-	
 }
