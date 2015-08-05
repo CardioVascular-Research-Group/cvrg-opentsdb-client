@@ -54,8 +54,7 @@ public class AppTest extends TestCase
     	HashMap<String, String> tags = new HashMap<String,String>();
     	tags.put("subjectId", "ncc1701applesauce");
     	tags.put("format", "applesauce");
-    	JSONArray array = TimeSeriesRetriever.retrieveTimeSeries(OPENTSDB_URL, 1420088400L, 1420088401L, "ecg.applesauce.uv", tags);
-    	JSONObject object = array.getJSONObject(0);
+    	JSONObject object = TimeSeriesRetriever.retrieveTimeSeries(OPENTSDB_URL, 1420088400L, 1420088401L, "ecg.applesauce.uv", tags);
     	JSONObject data = object.getJSONObject("dps");
     	System.out.println(object.toString());
     	assertTrue(data.getInt("1420088400") == 16);

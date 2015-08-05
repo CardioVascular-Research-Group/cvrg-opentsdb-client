@@ -42,15 +42,15 @@ public class TimeSeriesRetriever{
 		return TimeSeriesUtility.findTsuid(urlString, subjectId, metric, startTime);
 	}
 	
-	public static JSONArray retrieveTimeSeries(String urlString, long startEpoch, long endEpoch, String metric, HashMap<String, String> tags){
+	public static JSONObject retrieveTimeSeries(String urlString, long startEpoch, long endEpoch, String metric, HashMap<String, String> tags){
 		return retrieveTimeSeriesPOST(urlString, startEpoch, endEpoch, metric, tags);
 	}
 	      
-	public static JSONArray retrieveTimeSeries(String urlString, long startEpoch, long endEpoch, String metric, HashMap<String, String> tags, boolean showTSUIDs){
+	public static JSONObject retrieveTimeSeries(String urlString, long startEpoch, long endEpoch, String metric, HashMap<String, String> tags, boolean showTSUIDs){
 		return retrieveTimeSeriesGET(urlString, startEpoch, endEpoch, metric, tags, showTSUIDs);
 	}
 	
-	private static JSONArray retrieveTimeSeriesPOST(String urlString, long startEpoch, long endEpoch, String metric, HashMap<String, String> tags){
+	private static JSONObject retrieveTimeSeriesPOST(String urlString, long startEpoch, long endEpoch, String metric, HashMap<String, String> tags){
 		      
 		urlString = urlString + API_METHOD;
 		String result = "";
@@ -98,10 +98,10 @@ public class TimeSeriesRetriever{
 		} catch (OpenTSDBException e) {
 			result = String.valueOf(e.responseCode);
 		}
-		return TimeSeriesUtility.makeResponseJSONArray(result);
+		return TimeSeriesUtility.makeResponseJSONObject(result);
 	}
 	
-	private static JSONArray retrieveTimeSeriesGET(String urlString, long startEpoch, long endEpoch, String metric, HashMap<String, String> tags, boolean showTSUIDs){
+	private static JSONObject retrieveTimeSeriesGET(String urlString, long startEpoch, long endEpoch, String metric, HashMap<String, String> tags, boolean showTSUIDs){
 	
 		urlString = urlString + API_METHOD;
 		String result = "";
@@ -144,6 +144,6 @@ public class TimeSeriesRetriever{
 			e.printStackTrace();
 			result = String.valueOf(e.responseCode);
 		}
-		return TimeSeriesUtility.makeResponseJSONArray(result);
+		return TimeSeriesUtility.makeResponseJSONObject(result);
 	}
 }

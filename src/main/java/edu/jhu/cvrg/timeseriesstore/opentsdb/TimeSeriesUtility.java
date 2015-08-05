@@ -53,15 +53,15 @@ public class TimeSeriesUtility {
 		String tsuid = "";
 		long endTime = startTime + 1;
 		HashMap<String, String> tags = new HashMap<String, String>();
-		JSONArray results = null;
-		JSONObject dataObject = null;
+		JSONObject results = null;
+//		JSONObject dataObject = null;
 		
 		tags.put("subjectId", subjectId);
 		
 		results = TimeSeriesRetriever.retrieveTimeSeries(urlString, startTime, endTime, metric, tags, true);
-		dataObject = results.getJSONObject(0);
+//		dataObject = results.getJSONObject(0);
 
-		JSONArray tsuids = dataObject.getJSONArray("tsuids");
+		JSONArray tsuids = results.getJSONArray("tsuids");
 		
 		tsuid = tsuids.getString(0);
 		
