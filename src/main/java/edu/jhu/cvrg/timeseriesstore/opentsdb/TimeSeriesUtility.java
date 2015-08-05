@@ -44,28 +44,18 @@ public class TimeSeriesUtility {
 	
 	protected static long DEFAULT_START_TIME = 1420088400L;//1 January, 2015 00:00:00
 	
-	protected static String findTsuid(String urlString, String subjectId, String metric){
-		return findTsuid(urlString, subjectId, metric, DEFAULT_START_TIME);
+	protected static String findTsuid(String urlString, HashMap<String, String> tags, String metric){
+		return findTsuid(urlString, tags, metric, DEFAULT_START_TIME);
 	}
 	
-	protected static String findTsuid(String urlString, String subjectId, String metric, long startTime){
-		
-		String tsuid = "";
-		long endTime = startTime + 1;
-		HashMap<String, String> tags = new HashMap<String, String>();
-		JSONObject results = null;
-//		JSONObject dataObject = null;
-		
-		tags.put("subjectId", subjectId);
-		
-		results = TimeSeriesRetriever.retrieveTimeSeries(urlString, startTime, endTime, metric, tags, true);
-//		dataObject = results.getJSONObject(0);
+	protected static String findTsuid(String urlString, HashMap<String, String> tags, String metric, long startTime){
 
-		JSONArray tsuids = results.getJSONArray("tsuids");
-		
-		tsuid = tsuids.getString(0);
-		
-		return tsuid;	
+		long endTime = startTime + 1;
+		JSONObject results = null;	
+		results = TimeSeriesRetriever.retrieveTimeSeries(urlString, startTime, endTime, metric, tags, true);
+		JSONArray tsuidsArray = results.getJSONArray("tsuids");
+	
+		return tsuidsArray.getString(0);
 	}
 	
 	protected static int insertDataPoints(String urlString, ArrayList<IncomingDataPoint> points) throws IOException{
@@ -158,16 +148,15 @@ public class TimeSeriesUtility {
 	}
 	
 	protected static JSONObject makeResponseJSONObject(String data){
-		
-		JSONObject product = null;
+	
+		JSONArray product = null;
 		try{
-			product = new JSONObject(data);
+			product = new JSONArray(data);
 		} catch (JSONException e){
-			product = new JSONObject();
-			product.put("code", data);
+			e.printStackTrace();
 		}
 
-		return product;
+		return (JSONObject) product.get(0);
 	}
 	
 	protected static JSONArray makeResponseJSONArray(String data){

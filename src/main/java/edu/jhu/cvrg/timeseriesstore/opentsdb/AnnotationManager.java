@@ -15,7 +15,7 @@ See the License for the specific language governing permissions and
 limitations under the License.
 */
 /**
-* @author Chris Jurado
+* @author Chris Jurado, helper:Mackenzie Jurado
 * 
 */
 import java.io.IOException;
@@ -70,6 +70,7 @@ public class AnnotationManager {
 		
 		urlString = urlString + API_METHOD;
 		String result = "";
+		JSONObject resultObject = null;
 		
 		StringBuilder builder = new StringBuilder();
 		
@@ -86,8 +87,14 @@ public class AnnotationManager {
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
-	
-		return TimeSeriesUtility.makeResponseJSONObject(result);
+		if(result.equals("404")){
+			resultObject = new JSONObject();
+			resultObject.put("code", result);
+		}
+		else{
+			resultObject = new JSONObject(result);
+		}
+		return resultObject;
 	}
 	
 	public static String editAnnotation(String urlString, long startEpoch, long endEpoch, String tsuid, String description, String notes){
@@ -118,11 +125,11 @@ public class AnnotationManager {
 		try{		
 			HttpURLConnection httpConnection = TimeSeriesUtility.openHTTPConnectionDELETE(urlString + builder.toString());
 			result = TimeSeriesUtility.readHttpResponse(httpConnection);
-			
 		} catch (IOException e) {
 			e.printStackTrace();
 		} catch (OpenTSDBException e) {
 			result = String.valueOf(e.responseCode);
+
 		}
 	
 		return result;

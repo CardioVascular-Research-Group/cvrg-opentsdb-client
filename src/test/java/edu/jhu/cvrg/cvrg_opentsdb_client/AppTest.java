@@ -62,14 +62,18 @@ public class AppTest extends TestCase
 
     @Test
     public void testTsuidGet(){
-    	String result = "";  	
-    	result = TimeSeriesRetriever.findTsuid(OPENTSDB_URL, "ncc1701E", "ecg.I.uv");
+    	String result = ""; 
+    	HashMap<String, String> tags = new HashMap<String, String>();
+    	tags.put("subjectId", "ncc1701E");
+    	result = TimeSeriesRetriever.findTsuid(OPENTSDB_URL, tags, "ecg.I.uv");
     	assertTrue(result != "");
     }
     
     @Test
     public void testStoreSinglePointAnnotation(){
-    	String tsuid = TimeSeriesRetriever.findTsuid(OPENTSDB_URL, "ncc1701E", "ecg.I.uv");
+    	HashMap<String, String> tags = new HashMap<String, String>();
+    	tags.put("subjectId", "ncc1701E");
+    	String tsuid = TimeSeriesRetriever.findTsuid(OPENTSDB_URL, tags, "ecg.I.uv");
     	String description = "Test Annotation One";
     	String result = AnnotationManager.createSinglePointAnnotation(OPENTSDB_URL, 1420070460L, tsuid, description, "");
     	assertTrue(result != "");
@@ -77,7 +81,9 @@ public class AppTest extends TestCase
     
     @Test
     public void testRetrieveSinglePointAnnotation(){
-    	String tsuid = TimeSeriesRetriever.findTsuid(OPENTSDB_URL, "ncc1701E", "ecg.I.uv");
+    	HashMap<String, String> tags = new HashMap<String, String>();
+    	tags.put("subjectId", "ncc1701E");
+    	String tsuid = TimeSeriesRetriever.findTsuid(OPENTSDB_URL, tags, "ecg.I.uv");
     	JSONObject result = AnnotationManager.queryAnnotation(OPENTSDB_URL, 1420070460L, tsuid);
     	String description = result.getString("description");
     	assertTrue(description.equals("Test Annotation One"));
@@ -85,7 +91,9 @@ public class AppTest extends TestCase
     
     @Test
     public void testStoreIntervalAnnotation(){
-    	String tsuid = TimeSeriesRetriever.findTsuid(OPENTSDB_URL, "ncc1701E", "ecg.I.uv");
+    	HashMap<String, String> tags = new HashMap<String, String>();
+    	tags.put("subjectId", "ncc1701E");
+    	String tsuid = TimeSeriesRetriever.findTsuid(OPENTSDB_URL, tags, "ecg.I.uv");
     	String description = "Test Annotation One";
     	String result = AnnotationManager.createIntervalAnnotation(OPENTSDB_URL, 1420070465L, 1420070467L, tsuid, description, "");
     	assertTrue(result != "");
@@ -93,7 +101,9 @@ public class AppTest extends TestCase
     
     @Test
     public void testRetrieveIntervalAnnotation(){
-    	String tsuid = TimeSeriesRetriever.findTsuid(OPENTSDB_URL, "ncc1701E", "ecg.I.uv");
+    	HashMap<String, String> tags = new HashMap<String, String>();
+    	tags.put("subjectId", "ncc1701E");
+    	String tsuid = TimeSeriesRetriever.findTsuid(OPENTSDB_URL, tags, "ecg.I.uv");
     	JSONObject result = AnnotationManager.queryAnnotation(OPENTSDB_URL, 1420070465L, tsuid);
     	String description = result.getString("description");
     	assertTrue(description.equals("Test Annotation One"));
@@ -102,7 +112,9 @@ public class AppTest extends TestCase
     @Test
     public void testEditAnnotation(){
     	String newDescription, newNotes = "";
-    	String tsuid = TimeSeriesRetriever.findTsuid(OPENTSDB_URL, "ncc1701E", "ecg.I.uv");
+    	HashMap<String, String> tags = new HashMap<String, String>();
+    	tags.put("subjectId", "ncc1701E");
+    	String tsuid = TimeSeriesRetriever.findTsuid(OPENTSDB_URL, tags, "ecg.I.uv");
     	String description = "This should not change.";
     	String notes = "This should change.";
     	AnnotationManager.createSinglePointAnnotation(OPENTSDB_URL, 1420070490L, tsuid, description, notes);
@@ -115,7 +127,9 @@ public class AppTest extends TestCase
     
     @Test
     public void testDelete(){
-    	String tsuid = TimeSeriesRetriever.findTsuid(OPENTSDB_URL, "ncc1701E", "ecg.I.uv");
+    	HashMap<String, String> tags = new HashMap<String, String>();
+    	tags.put("subjectId", "ncc1701E");
+    	String tsuid = TimeSeriesRetriever.findTsuid(OPENTSDB_URL, tags, "ecg.I.uv");
     	String code = "";
     	AnnotationManager.createSinglePointAnnotation(OPENTSDB_URL, 1420070485L, tsuid, "Delete me", "Please");
     	JSONObject result = AnnotationManager.queryAnnotation(OPENTSDB_URL, 1420070485L, tsuid);

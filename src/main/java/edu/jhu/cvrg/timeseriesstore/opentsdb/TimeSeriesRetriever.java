@@ -34,12 +34,12 @@ public class TimeSeriesRetriever{
 	
 	private static String API_METHOD = "/api/query/";
 	
-	public static String findTsuid(String urlString, String subjectId, String metric){
-		return findTsuid(urlString, subjectId, metric, TimeSeriesUtility.DEFAULT_START_TIME);
+	public static String findTsuid(String urlString, HashMap tags, String metric){
+		return findTsuid(urlString, tags, metric, TimeSeriesUtility.DEFAULT_START_TIME);
 	}
 	
-	public static String findTsuid(String urlString, String subjectId, String metric, long startTime){
-		return TimeSeriesUtility.findTsuid(urlString, subjectId, metric, startTime);
+	public static String findTsuid(String urlString, HashMap tags, String metric, long startTime){
+		return TimeSeriesUtility.findTsuid(urlString, tags, metric, startTime);
 	}
 	
 	public static JSONObject retrieveTimeSeries(String urlString, long startEpoch, long endEpoch, String metric, HashMap<String, String> tags){
