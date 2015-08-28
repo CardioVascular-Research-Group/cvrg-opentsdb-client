@@ -21,6 +21,7 @@ limitations under the License.
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 
 import edu.jhu.cvrg.timeseriesstore.exceptions.OpenTSDBException;
 import edu.jhu.cvrg.timeseriesstore.model.IncomingDataPoint;
@@ -39,6 +40,22 @@ public class TimeSeriesStorer {
 			responseCode = TimeSeriesUtility.insertDataPoints(urlString, point);
 			if(responseCode > 301 || responseCode == 0){
 				throw new OpenTSDBException(responseCode, urlString, dataPoint.toString());
+			}
+		} catch (IOException e) {
+			e.printStackTrace();
+		} catch (OpenTSDBException e) {
+			e.printStackTrace();
+		}
+	}
+	
+	public static void storeTimePoints(String urlString, List<IncomingDataPoint> dataPoints){
+		int responseCode = 0;
+		urlString = urlString + API_METHOD;
+		
+		try {
+			responseCode = TimeSeriesUtility.insertDataPoints(urlString, dataPoints);
+			if(responseCode > 301 || responseCode == 0){
+				throw new OpenTSDBException(responseCode, urlString, dataPoints.toString());
 			}
 		} catch (IOException e) {
 			e.printStackTrace();

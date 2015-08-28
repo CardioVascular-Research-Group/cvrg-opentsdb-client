@@ -26,8 +26,8 @@ import java.io.UnsupportedEncodingException;
 import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
 import java.net.URL;
-import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -38,7 +38,6 @@ import com.google.gson.Gson;
 import edu.jhu.cvrg.timeseriesstore.enums.HttpVerbs;
 import edu.jhu.cvrg.timeseriesstore.exceptions.OpenTSDBException;
 import edu.jhu.cvrg.timeseriesstore.model.IncomingDataPoint;
-import edu.jhu.cvrg.timeseriesstore.opentsdb.TimeSeriesRetriever;
 
 public class TimeSeriesUtility {
 	
@@ -58,7 +57,7 @@ public class TimeSeriesUtility {
 		return tsuidsArray.getString(0);
 	}
 	
-	protected static int insertDataPoints(String urlString, ArrayList<IncomingDataPoint> points) throws IOException{
+	protected static int insertDataPoints(String urlString, List<IncomingDataPoint> points) throws IOException{
 		int code = 0;
 		Gson gson = new Gson();
 
