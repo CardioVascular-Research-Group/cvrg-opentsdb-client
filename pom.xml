@@ -18,7 +18,7 @@
 		<dependency>
 			<groupId>org.json</groupId>
 			<artifactId>json</artifactId>
-			<version>20140107</version>
+			<version>20090211</version>
 		</dependency>
 		<dependency>
 			<groupId>com.google.code.gson</groupId>

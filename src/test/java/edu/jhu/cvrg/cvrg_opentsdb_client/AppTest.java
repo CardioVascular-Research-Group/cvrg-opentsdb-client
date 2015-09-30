@@ -22,6 +22,7 @@ import java.util.HashMap;
 import junit.framework.TestCase;
 
 import org.json.JSONArray;
+import org.json.JSONException;
 import org.json.JSONObject;
 import org.junit.Test;
 
@@ -52,12 +53,18 @@ public class AppTest extends TestCase
     @Test
     public void testRetrieveSingleDataPoint(){
     	HashMap<String, String> tags = new HashMap<String,String>();
+    	int result = 0;
     	tags.put("subjectId", "ncc1701applesauce");
     	tags.put("format", "applesauce");
     	JSONObject object = TimeSeriesRetriever.retrieveTimeSeries(OPENTSDB_URL, 1420088400L, 1420088401L, "ecg.applesauce.uv", tags);
-    	JSONObject data = object.getJSONObject("dps");
-    	System.out.println(object.toString());
-    	assertTrue(data.getInt("1420088400") == 16);
+    	try {
+			JSONObject data = object.getJSONObject("dps");
+			System.out.println(object.toString());
+			result = data.getInt("1420088400");
+		} catch (JSONException e) {
+			e.printStackTrace();
+		}
+    	assertTrue( result == 16);
     }
 
     @Test
@@ -85,8 +92,14 @@ public class AppTest extends TestCase
     	tags.put("subjectId", "ncc1701E");
     	String tsuid = TimeSeriesRetriever.findTsuid(OPENTSDB_URL, tags, "ecg.I.uv");
     	JSONObject result = AnnotationManager.queryAnnotation(OPENTSDB_URL, 1420070460L, tsuid);
-    	String description = result.getString("description");
-    	assertTrue(description.equals("Test Annotation One"));
+    	String description = null;
+		try {
+			description = result.getString("description");
+		} catch (JSONException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+    	assertTrue("Test Annotation One".equals(description));
     }
     
     @Test
@@ -105,13 +118,19 @@ public class AppTest extends TestCase
     	tags.put("subjectId", "ncc1701E");
     	String tsuid = TimeSeriesRetriever.findTsuid(OPENTSDB_URL, tags, "ecg.I.uv");
     	JSONObject result = AnnotationManager.queryAnnotation(OPENTSDB_URL, 1420070465L, tsuid);
-    	String description = result.getString("description");
-    	assertTrue(description.equals("Test Annotation One"));
+    	String description = null;
+		try {
+			description = result.getString("description");
+		} catch (JSONException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+    	assertTrue("Test Annotation One".equals(description));
     }
        
     @Test
     public void testEditAnnotation(){
-    	String newDescription, newNotes = "";
+    	String newDescription = "", newNotes = "";
     	HashMap<String, String> tags = new HashMap<String, String>();
     	tags.put("subjectId", "ncc1701E");
     	String tsuid = TimeSeriesRetriever.findTsuid(OPENTSDB_URL, tags, "ecg.I.uv");
@@ -120,8 +139,12 @@ public class AppTest extends TestCase
     	AnnotationManager.createSinglePointAnnotation(OPENTSDB_URL, 1420070490L, tsuid, description, notes);
     	AnnotationManager.editAnnotation(OPENTSDB_URL, 1420070490L, 0L, tsuid, description, "I changed.");
     	JSONObject editedResultJSON = AnnotationManager.queryAnnotation(OPENTSDB_URL, 1420070470L, tsuid);
-    	newDescription = editedResultJSON.getString("description");
-    	newNotes = editedResultJSON.getString("notes");
+    	try {
+			newDescription = editedResultJSON.getString("description");
+			newNotes = editedResultJSON.getString("notes");
+		} catch (JSONException e) {
+			e.printStackTrace();
+		}
     	assertTrue(description.equals(newDescription) && !notes.equals(newNotes));
     }
     
@@ -135,7 +158,11 @@ public class AppTest extends TestCase
     	JSONObject result = AnnotationManager.queryAnnotation(OPENTSDB_URL, 1420070485L, tsuid);
     	AnnotationManager.deleteAnnotation(OPENTSDB_URL, 1420070485L, tsuid);
     	result = AnnotationManager.queryAnnotation(OPENTSDB_URL, 1420070485L, tsuid);
-    	code = result.getString("code");	
+    	try {
+			code = result.getString("code");
+		} catch (JSONException e) {
+			e.printStackTrace();
+		}	
     	assertTrue(code.equals("404"));
     }   
 }

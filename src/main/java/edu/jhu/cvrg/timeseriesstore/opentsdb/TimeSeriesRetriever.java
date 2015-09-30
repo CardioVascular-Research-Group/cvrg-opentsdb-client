@@ -26,6 +26,7 @@ import java.util.Iterator;
 import java.util.Map;
 
 import org.json.JSONArray;
+import org.json.JSONException;
 import org.json.JSONObject;
 
 import edu.jhu.cvrg.timeseriesstore.exceptions.OpenTSDBException;
@@ -97,6 +98,9 @@ public class TimeSeriesRetriever{
 			return null;
 		} catch (OpenTSDBException e) {
 			result = String.valueOf(e.responseCode);
+		} catch (JSONException e) {
+			e.printStackTrace();
+			return null;
 		}
 		return TimeSeriesUtility.makeResponseJSONObject(result);
 	}

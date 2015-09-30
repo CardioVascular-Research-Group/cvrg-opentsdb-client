@@ -52,9 +52,15 @@ public class TimeSeriesUtility {
 		long endTime = startTime + 1;
 		JSONObject results = null;	
 		results = TimeSeriesRetriever.retrieveTimeSeries(urlString, startTime, endTime, metric, tags, true);
-		JSONArray tsuidsArray = results.getJSONArray("tsuids");
+		String ret = null;
+		try {
+			JSONArray tsuidsArray = results.getJSONArray("tsuids");
+			ret = tsuidsArray.getString(0);
+		} catch (JSONException e) {
+			e.printStackTrace();
+		}
 	
-		return tsuidsArray.getString(0);
+		return ret;
 	}
 	
 	protected static int insertDataPoints(String urlString, List<IncomingDataPoint> points) throws IOException{
@@ -149,13 +155,15 @@ public class TimeSeriesUtility {
 	protected static JSONObject makeResponseJSONObject(String data){
 	
 		JSONArray product = null;
+		JSONObject ret = null;
 		try{
 			product = new JSONArray(data);
+			ret = (JSONObject) product.get(0);
 		} catch (JSONException e){
 			e.printStackTrace();
 		}
 
-		return (JSONObject) product.get(0);
+		return ret;
 	}
 	
 	protected static JSONArray makeResponseJSONArray(String data){

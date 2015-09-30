@@ -22,6 +22,7 @@ import java.io.IOException;
 import java.io.OutputStreamWriter;
 import java.net.HttpURLConnection;
 
+import org.json.JSONException;
 import org.json.JSONObject;
 
 import edu.jhu.cvrg.timeseriesstore.exceptions.OpenTSDBException;
@@ -61,6 +62,8 @@ public class AnnotationManager {
 		} catch (OpenTSDBException e) {
 			e.printStackTrace();
 			result = String.valueOf(e.responseCode);
+		} catch (JSONException e) {
+			e.printStackTrace();
 		}
 
 		return result;
@@ -86,14 +89,20 @@ public class AnnotationManager {
 			result = String.valueOf(e.responseCode);
 		} catch (IOException e) {
 			e.printStackTrace();
+		} 
+		
+		try {
+			if(result.equals("404")){
+				resultObject = new JSONObject();
+				resultObject.put("code", result);
+			}
+			else{
+				resultObject = new JSONObject(result);
+			}
+		} catch (JSONException e) {
+			e.printStackTrace();
 		}
-		if(result.equals("404")){
-			resultObject = new JSONObject();
-			resultObject.put("code", result);
-		}
-		else{
-			resultObject = new JSONObject(result);
-		}
+		
 		return resultObject;
 	}
 	
@@ -101,8 +110,15 @@ public class AnnotationManager {
 		
 		JSONObject annotation = queryAnnotation(urlString, startEpoch, tsuid);
 
-		String descriptionOld = annotation.getString("description");
-		String notesOld = annotation.getString("notes");
+		String descriptionOld = "";
+		String notesOld = "";
+		try {
+			descriptionOld = annotation.getString("description");
+			notesOld = annotation.getString("notes");
+		} catch (JSONException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
 
 		description = (description.equals("")) ? descriptionOld : description;
 		notes = (notes.equals("")) ? notesOld : notes;
