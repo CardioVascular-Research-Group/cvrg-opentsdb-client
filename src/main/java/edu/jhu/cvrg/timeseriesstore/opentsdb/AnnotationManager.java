@@ -22,6 +22,7 @@ import java.io.IOException;
 import java.io.OutputStreamWriter;
 import java.net.HttpURLConnection;
 
+import org.json.JSONException;
 import org.json.JSONObject;
 
 import edu.jhu.cvrg.timeseriesstore.exceptions.OpenTSDBException;
@@ -35,37 +36,32 @@ public class AnnotationManager {
 	}
 	
 	public static String createIntervalAnnotation(String urlString, long startEpoch, long endEpoch, String tsuid, String description, String notes){
-				
 		urlString = urlString + API_METHOD;
 		String result = "";
-		
 		try{		
 			HttpURLConnection httpConnection = TimeSeriesUtility.openHTTPConnectionPOST(urlString);
 			OutputStreamWriter wr = new OutputStreamWriter(httpConnection.getOutputStream());
-			
 			JSONObject requestObject = new JSONObject();
 			requestObject.put("startTime", startEpoch);
 			requestObject.put("endTime", endEpoch);
 			requestObject.put("tsuid", tsuid);
 			requestObject.put("description", description);	
 			requestObject.put("notes", notes);
-			
 			wr.write(requestObject.toString());
 			wr.close();
-			
-			result = TimeSeriesUtility.readHttpResponse(httpConnection);
-			
+			result = TimeSeriesUtility.readHttpResponse(httpConnection);	
 		} catch (IOException e) {
 			e.printStackTrace();
 			return null;
 		} catch (OpenTSDBException e) {
 			e.printStackTrace();
 			result = String.valueOf(e.responseCode);
+		} catch (JSONException e) {
+			e.printStackTrace();
 		}
-
 		return result;
 	}
-	
+
 	public static JSONObject queryAnnotation(String urlString, long startEpoch, String tsuid){
 		
 		urlString = urlString + API_METHOD;
@@ -86,23 +82,35 @@ public class AnnotationManager {
 			result = String.valueOf(e.responseCode);
 		} catch (IOException e) {
 			e.printStackTrace();
+		} 
+		
+		try {
+			if(result.equals("404")){
+				resultObject = new JSONObject();
+				resultObject.put("code", result);
+			}
+			else{
+				resultObject = new JSONObject(result);
+			}
+		} catch (JSONException e) {
+			e.printStackTrace();
 		}
-		if(result.equals("404")){
-			resultObject = new JSONObject();
-			resultObject.put("code", result);
-		}
-		else{
-			resultObject = new JSONObject(result);
-		}
+		
 		return resultObject;
 	}
 	
-	public static String editAnnotation(String urlString, long startEpoch, long endEpoch, String tsuid, String description, String notes){
-		
+	public static String editAnnotation(String urlString, long startEpoch, long endEpoch, String tsuid, String description, String notes){		
 		JSONObject annotation = queryAnnotation(urlString, startEpoch, tsuid);
 
-		String descriptionOld = annotation.getString("description");
-		String notesOld = annotation.getString("notes");
+		String descriptionOld = "";
+		String notesOld = "";
+		try {
+			descriptionOld = annotation.getString("description");
+			notesOld = annotation.getString("notes");
+		} catch (JSONException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
 
 		description = (description.equals("")) ? descriptionOld : description;
 		notes = (notes.equals("")) ? notesOld : notes;
@@ -111,17 +119,13 @@ public class AnnotationManager {
 	}
 	
 	public static String deleteAnnotation(String urlString, long startEpoch, String tsuid){
-		
 		urlString = urlString + API_METHOD;
 		String result = "";
-		
 		StringBuilder builder = new StringBuilder();
-		
 		builder.append("?start_time=");
 		builder.append(startEpoch);
 		builder.append("&tsuid=");
 		builder.append(tsuid);
-		
 		try{		
 			HttpURLConnection httpConnection = TimeSeriesUtility.openHTTPConnectionDELETE(urlString + builder.toString());
 			result = TimeSeriesUtility.readHttpResponse(httpConnection);
@@ -129,9 +133,7 @@ public class AnnotationManager {
 			e.printStackTrace();
 		} catch (OpenTSDBException e) {
 			result = String.valueOf(e.responseCode);
-
 		}
-	
 		return result;
 	}
 }

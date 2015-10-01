@@ -4,7 +4,7 @@
 
 	<groupId>edu.jhu.cvrg</groupId>
 	<artifactId>cvrg-opentsdb-client</artifactId>
-	<version>0.7.5-SNAPSHOT</version>
+	<version>0.7.6-SNAPSHOT</version>
 	<packaging>jar</packaging>
 
 	<name>cvrg-opentsdb-client</name>
@@ -16,15 +16,9 @@
 
 	<dependencies>
 		<dependency>
-			<groupId>junit</groupId>
-			<artifactId>junit</artifactId>
-			<version>3.8.1</version>
-			<scope>test</scope>
-		</dependency>
-		<dependency>
 			<groupId>org.json</groupId>
 			<artifactId>json</artifactId>
-			<version>20140107</version>
+			<version>20090211</version>
 		</dependency>
 		<dependency>
 			<groupId>com.google.code.gson</groupId>
@@ -40,6 +34,7 @@
 			<groupId>junit</groupId>
 			<artifactId>junit</artifactId>
 			<version>4.4</version>
+			<scope>test</scope>
 		</dependency>
 	</dependencies>
 	<repositories>

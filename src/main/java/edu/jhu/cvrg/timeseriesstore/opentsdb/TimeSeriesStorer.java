@@ -21,6 +21,7 @@ limitations under the License.
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 
 import edu.jhu.cvrg.timeseriesstore.exceptions.OpenTSDBException;
 import edu.jhu.cvrg.timeseriesstore.model.IncomingDataPoint;
@@ -34,11 +35,26 @@ public class TimeSeriesStorer {
 		urlString = urlString + API_METHOD;
 		ArrayList<IncomingDataPoint> point = new ArrayList<IncomingDataPoint>();
 		point.add(dataPoint);
-		
 		try {
 			responseCode = TimeSeriesUtility.insertDataPoints(urlString, point);
 			if(responseCode > 301 || responseCode == 0){
 				throw new OpenTSDBException(responseCode, urlString, dataPoint.toString());
+			}
+		} catch (IOException e) {
+			e.printStackTrace();
+		} catch (OpenTSDBException e) {
+			e.printStackTrace();
+		}
+	}
+	
+	public static void storeTimePoints(String urlString, List<IncomingDataPoint> dataPoints){
+		int responseCode = 0;
+		urlString = urlString + API_METHOD;
+		
+		try {
+			responseCode = TimeSeriesUtility.insertDataPoints(urlString, dataPoints);
+			if(responseCode > 301 || responseCode == 0){
+				throw new OpenTSDBException(responseCode, urlString, dataPoints.toString());
 			}
 		} catch (IOException e) {
 			e.printStackTrace();
@@ -53,10 +69,12 @@ public class TimeSeriesStorer {
 		point.setMetric(metric);
 		point.setTags(tags);
 		point.setTimestamp(epochTime);
-		
 		storeTimePoint(urlString, point);
 	}
 	
+	//The delete methods are not implemented because there is no API mechanism in OpenTSDB 
+	//to delete data points at this time.  These methods w ill be implemented once that is available.
+	//-CRJ 1 October, 2015
 	public static void deleteTimePoint(String urlString, String metric, long epochTime){}
 	
 	public static void deleteTimeSeries(String urlString, String tsuid){}
@@ -64,5 +82,4 @@ public class TimeSeriesStorer {
 	protected String getChannelName(int index, String[] channels){
 		return channels[index];
 	}
-
 }
