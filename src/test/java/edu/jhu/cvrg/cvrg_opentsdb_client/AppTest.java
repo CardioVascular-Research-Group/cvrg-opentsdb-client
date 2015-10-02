@@ -21,7 +21,6 @@ import java.util.HashMap;
 
 import junit.framework.TestCase;
 
-import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 import org.junit.Test;
@@ -47,11 +46,10 @@ public class AppTest extends TestCase
     	tags.put("format", "applesauce");
     	IncomingDataPoint dataPoint = new IncomingDataPoint("ecg.applesauce.uv", 1420088400L, "16", tags);
     	TimeSeriesStorer.storeTimePoint(OPENTSDB_URL, dataPoint);
-    	assertTrue(true);
+    	assertTrue(testRetrieveSingleDataPoint());
     }
-    
-    @Test
-    public void testRetrieveSingleDataPoint(){
+
+    public boolean testRetrieveSingleDataPoint(){
     	HashMap<String, String> tags = new HashMap<String,String>();
     	int result = 0;
     	tags.put("subjectId", "ncc1701applesauce");
@@ -63,8 +61,9 @@ public class AppTest extends TestCase
 			result = data.getInt("1420088400");
 		} catch (JSONException e) {
 			e.printStackTrace();
+			return false;
 		}
-    	assertTrue( result == 16);
+    	return (result == 16);
     }
 
     @Test
@@ -73,6 +72,7 @@ public class AppTest extends TestCase
     	HashMap<String, String> tags = new HashMap<String, String>();
     	tags.put("subjectId", "ncc1701E");
     	result = TimeSeriesRetriever.findTsuid(OPENTSDB_URL, tags, "ecg.I.uv");
+    	System.out.println("TSUID is " + result);
     	assertTrue(result != "");
     }
     
@@ -83,11 +83,11 @@ public class AppTest extends TestCase
     	String tsuid = TimeSeriesRetriever.findTsuid(OPENTSDB_URL, tags, "ecg.I.uv");
     	String description = "Test Annotation One";
     	String result = AnnotationManager.createSinglePointAnnotation(OPENTSDB_URL, 1420070460L, tsuid, description, "");
-    	assertTrue(result != "");
+    	System.out.println("Single point Annotation result is " + result);
+    	assertTrue(testRetrieveSinglePointAnnotation());
     }
-    
-    @Test
-    public void testRetrieveSinglePointAnnotation(){
+
+    public boolean testRetrieveSinglePointAnnotation(){
     	HashMap<String, String> tags = new HashMap<String, String>();
     	tags.put("subjectId", "ncc1701E");
     	String tsuid = TimeSeriesRetriever.findTsuid(OPENTSDB_URL, tags, "ecg.I.uv");
@@ -96,10 +96,10 @@ public class AppTest extends TestCase
 		try {
 			description = result.getString("description");
 		} catch (JSONException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
+			return false;
 		}
-    	assertTrue("Test Annotation One".equals(description));
+    	return ("Test Annotation One".equals(description));
     }
     
     @Test
@@ -109,11 +109,11 @@ public class AppTest extends TestCase
     	String tsuid = TimeSeriesRetriever.findTsuid(OPENTSDB_URL, tags, "ecg.I.uv");
     	String description = "Test Annotation One";
     	String result = AnnotationManager.createIntervalAnnotation(OPENTSDB_URL, 1420070465L, 1420070467L, tsuid, description, "");
-    	assertTrue(result != "");
+    	System.out.println("Interval Annotation result is " + result);
+    	assertTrue(testRetrieveIntervalAnnotation());
     }
     
-    @Test
-    public void testRetrieveIntervalAnnotation(){
+    public boolean testRetrieveIntervalAnnotation(){
     	HashMap<String, String> tags = new HashMap<String, String>();
     	tags.put("subjectId", "ncc1701E");
     	String tsuid = TimeSeriesRetriever.findTsuid(OPENTSDB_URL, tags, "ecg.I.uv");
@@ -122,10 +122,10 @@ public class AppTest extends TestCase
 		try {
 			description = result.getString("description");
 		} catch (JSONException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
+			return false;
 		}
-    	assertTrue("Test Annotation One".equals(description));
+    	return ("Test Annotation One".equals(description));
     }
        
     @Test
@@ -149,7 +149,7 @@ public class AppTest extends TestCase
     }
     
     @Test
-    public void testDelete(){
+    public void testDeleteAnnotation(){
     	HashMap<String, String> tags = new HashMap<String, String>();
     	tags.put("subjectId", "ncc1701E");
     	String tsuid = TimeSeriesRetriever.findTsuid(OPENTSDB_URL, tags, "ecg.I.uv");
@@ -161,7 +161,7 @@ public class AppTest extends TestCase
     	try {
 			code = result.getString("code");
 		} catch (JSONException e) {
-			e.printStackTrace();
+			e.printStackTrace();//This will print the 404 error.  This indicates the test is a SUCCESS. -CRJ 2 October 2015
 		}	
     	assertTrue(code.equals("404"));
     }   

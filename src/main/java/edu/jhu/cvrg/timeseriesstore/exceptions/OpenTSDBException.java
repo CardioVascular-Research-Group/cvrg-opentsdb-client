@@ -50,12 +50,12 @@ public class OpenTSDBException extends Exception {
 		case 501:	message = code501;	break;
 		case 503:	message = code503;	break;	
 		}
-		return message;
+		return "Error Code " + responseCode + ":" + message;
 	}
 	
 	//Messages are from the HTTP api site at http://opentsdb.net/docs/build/html/api_http/index.html
 	private String code400 = "Information provided by the API user, via a query string or content data, was in error or missing. This will usually include information in the error body about what parameter caused the issue. Correct the data and try again.";
-	private String code404 = "The requested endpoint or file was not found. This is usually related to the static file endpoint.";
+	private String code404 = "Either the requested annotation does not exist or the requested endpoint or file was not found. This is usually related to the static file endpoint.";
 	private String code405 = "The requested verb or method was not allowed. Please see the documentation for the endpoint you are attempting to access.";
 	private String code406 = "The request could not generate a response in the format specified. For example, if you ask for a PNG file of the logs endpoing, you will get a 406 response since log entries cannot be converted to a PNG image (easily)";
 	private String code408 = "The request has timed out. This may be due to a timeout fetching data from the underlying storage system or other issues.";
