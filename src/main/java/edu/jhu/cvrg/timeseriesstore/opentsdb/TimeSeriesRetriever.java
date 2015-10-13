@@ -24,6 +24,7 @@ import java.net.MalformedURLException;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
+import java.util.Map.Entry;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -35,11 +36,11 @@ public class TimeSeriesRetriever{
 	
 	private static String API_METHOD = "/api/query/";
 	
-	public static String findTsuid(String urlString, HashMap tags, String metric){
+	public static String findTsuid(String urlString, HashMap<String, String> tags, String metric){
 		return findTsuid(urlString, tags, metric, TimeSeriesUtility.DEFAULT_START_TIME);
 	}
 	
-	public static String findTsuid(String urlString, HashMap tags, String metric, long startTime){
+	public static String findTsuid(String urlString, HashMap<String, String> tags, String metric, long startTime){
 		return TimeSeriesUtility.findTsuid(urlString, tags, metric, startTime);
 	}
 	
@@ -75,8 +76,9 @@ public class TimeSeriesRetriever{
 			if(tags != null){
 				JSONObject queryTags = new JSONObject();
 	
-				Iterator entries = tags.entrySet().iterator();
+				Iterator<Entry<String, String>> entries = tags.entrySet().iterator();
 				while (entries.hasNext()) {
+					@SuppressWarnings("rawtypes")
 					Map.Entry entry = (Map.Entry) entries.next();
 				    queryTags.put((String)entry.getKey(), (String)entry.getValue());
 				}
@@ -124,8 +126,9 @@ public class TimeSeriesRetriever{
 		if(tags != null){
 			builder.append("{");
 			
-			Iterator entries = tags.entrySet().iterator();
+			Iterator<Entry<String, String>> entries = tags.entrySet().iterator();
 			while (entries.hasNext()) {
+				@SuppressWarnings("rawtypes")
 				Map.Entry entry = (Map.Entry) entries.next();
 				builder.append((String)entry.getKey());
 				builder.append("=");

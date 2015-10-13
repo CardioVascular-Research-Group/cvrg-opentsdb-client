@@ -35,7 +35,6 @@ public class TimeSeriesStorer {
 		urlString = urlString + API_METHOD;
 		ArrayList<IncomingDataPoint> point = new ArrayList<IncomingDataPoint>();
 		point.add(dataPoint);
-		
 		try {
 			responseCode = TimeSeriesUtility.insertDataPoints(urlString, point);
 			if(responseCode > 301 || responseCode == 0){
@@ -70,10 +69,12 @@ public class TimeSeriesStorer {
 		point.setMetric(metric);
 		point.setTags(tags);
 		point.setTimestamp(epochTime);
-		
 		storeTimePoint(urlString, point);
 	}
 	
+	//The delete methods are not implemented because there is no API mechanism in OpenTSDB 
+	//to delete data points at this time.  These methods w ill be implemented once that is available.
+	//-CRJ 1 October, 2015
 	public static void deleteTimePoint(String urlString, String metric, long epochTime){}
 	
 	public static String deleteTimeSeries(String host, long startEpoch, long endEpoch, List<String> metrics, HashMap<String, String> tags, String user, String password){

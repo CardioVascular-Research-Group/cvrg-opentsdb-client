@@ -36,26 +36,20 @@ public class AnnotationManager {
 	}
 	
 	public static String createIntervalAnnotation(String urlString, long startEpoch, long endEpoch, String tsuid, String description, String notes){
-				
 		urlString = urlString + API_METHOD;
 		String result = "";
-		
 		try{		
 			HttpURLConnection httpConnection = TimeSeriesUtility.openHTTPConnectionPOST(urlString);
 			OutputStreamWriter wr = new OutputStreamWriter(httpConnection.getOutputStream());
-			
 			JSONObject requestObject = new JSONObject();
 			requestObject.put("startTime", startEpoch);
 			requestObject.put("endTime", endEpoch);
 			requestObject.put("tsuid", tsuid);
 			requestObject.put("description", description);	
 			requestObject.put("notes", notes);
-			
 			wr.write(requestObject.toString());
 			wr.close();
-			
-			result = TimeSeriesUtility.readHttpResponse(httpConnection);
-			
+			result = TimeSeriesUtility.readHttpResponse(httpConnection);	
 		} catch (IOException e) {
 			e.printStackTrace();
 			return null;
@@ -65,10 +59,9 @@ public class AnnotationManager {
 		} catch (JSONException e) {
 			e.printStackTrace();
 		}
-
 		return result;
 	}
-	
+
 	public static JSONObject queryAnnotation(String urlString, long startEpoch, String tsuid){
 		
 		urlString = urlString + API_METHOD;
@@ -106,8 +99,7 @@ public class AnnotationManager {
 		return resultObject;
 	}
 	
-	public static String editAnnotation(String urlString, long startEpoch, long endEpoch, String tsuid, String description, String notes){
-		
+	public static String editAnnotation(String urlString, long startEpoch, long endEpoch, String tsuid, String description, String notes){		
 		JSONObject annotation = queryAnnotation(urlString, startEpoch, tsuid);
 
 		String descriptionOld = "";
@@ -127,17 +119,13 @@ public class AnnotationManager {
 	}
 	
 	public static String deleteAnnotation(String urlString, long startEpoch, String tsuid){
-		
 		urlString = urlString + API_METHOD;
 		String result = "";
-		
 		StringBuilder builder = new StringBuilder();
-		
 		builder.append("?start_time=");
 		builder.append(startEpoch);
 		builder.append("&tsuid=");
 		builder.append(tsuid);
-		
 		try{		
 			HttpURLConnection httpConnection = TimeSeriesUtility.openHTTPConnectionDELETE(urlString + builder.toString());
 			result = TimeSeriesUtility.readHttpResponse(httpConnection);
@@ -145,9 +133,7 @@ public class AnnotationManager {
 			e.printStackTrace();
 		} catch (OpenTSDBException e) {
 			result = String.valueOf(e.responseCode);
-
 		}
-	
 		return result;
 	}
 }
