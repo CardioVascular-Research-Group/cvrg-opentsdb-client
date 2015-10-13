@@ -76,10 +76,33 @@ public class TimeSeriesStorer {
 	
 	public static void deleteTimePoint(String urlString, String metric, long epochTime){}
 	
-	public static void deleteTimeSeries(String urlString, String tsuid){}
+	public static String deleteTimeSeries(String host, long startEpoch, long endEpoch, List<String> metrics, HashMap<String, String> tags, String user, String password){
+		StringBuilder command = new StringBuilder("/opt/opentsdb/build/tsdb scan --delete ");
+		
+		command.append(startEpoch).append(' ');
+		command.append(endEpoch).append(' ');
+		
+		for (String mtrc : metrics) {
+			command.append("sum ");
+			command.append(mtrc).append(' ');
+			
+			for(String tagKey : tags.keySet()){
+				command.append(tagKey).append('=').append(tags.get(tagKey)).append(',');
+			}
+			
+			int commaIndex = command.lastIndexOf(",");
+			
+			if(commaIndex >= 0){
+				command.deleteCharAt(commaIndex);
+			}
+			command.append(' ');
+		}
+	
+		return TimeSeriesUtility.executeSSHRemoteCommand(host, command.toString(), user, password);
+	}
 	
 	protected String getChannelName(int index, String[] channels){
 		return channels[index];
 	}
-
+	
 }

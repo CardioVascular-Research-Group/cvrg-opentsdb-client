@@ -20,6 +20,7 @@ limitations under the License.
 */
 import java.io.BufferedReader;
 import java.io.IOException;
+import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.OutputStreamWriter;
 import java.io.UnsupportedEncodingException;
@@ -34,6 +35,12 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import com.google.gson.Gson;
+import com.jcraft.jsch.Channel;
+import com.jcraft.jsch.ChannelExec;
+import com.jcraft.jsch.JSch;
+import com.jcraft.jsch.JSchException;
+import com.jcraft.jsch.Session;
+import com.jcraft.jsch.UserInfo;
 
 import edu.jhu.cvrg.timeseriesstore.enums.HttpVerbs;
 import edu.jhu.cvrg.timeseriesstore.exceptions.OpenTSDBException;
@@ -178,4 +185,74 @@ public class TimeSeriesUtility {
 
 		return array;
 	}
+	
+	protected static String executeSSHRemoteCommand(String host, String command, String user, String password){
+		JSch jsch=new JSch();  
+		
+		StringBuilder sb = new StringBuilder();
+		
+		try {
+			Session session=jsch.getSession(user, host, 22);
+			
+			//username and password will be given via UserInfo interface.
+			UserInfo ui= new MyUserInfo(password);
+			session.setUserInfo(ui);
+			session.connect();
+			
+			Channel channel=session.openChannel("exec");
+		    
+			((ChannelExec)channel).setCommand(command);
+			
+			channel.setInputStream(null);
+			((ChannelExec)channel).setErrStream(System.err);
+		    InputStream in=channel.getInputStream();
+
+		    channel.connect();
+
+		    byte[] tmp=new byte[1024];
+		    while(true){
+		    	while(in.available()>0){
+		          int i=in.read(tmp, 0, 1024);
+		          if(i<0)break;
+		          sb.append(new String(tmp, 0, i));
+		        }
+		    	
+		        if(channel.isClosed()){
+		          if(in.available()>0) continue; 
+		          sb.append("exit-status: "+channel.getExitStatus());
+		          break;
+		        }
+		        try{Thread.sleep(1000);}catch(Exception ee){}
+		    }
+		    channel.disconnect();
+		    session.disconnect();
+			
+			
+		} catch (JSchException e) {
+			e.printStackTrace();
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+		
+		return sb.toString();
+	}
+	
+	protected static class MyUserInfo implements UserInfo{
+		
+		private String passwd;
+		
+		public MyUserInfo(String password) {
+			passwd = password;
+		}
+		
+	    public String getPassword(){ return passwd; }
+	    public boolean promptYesNo(String str){ return true; }
+	    public String getPassphrase(){ return null; }
+	    public boolean promptPassphrase(String message){ return true; }
+	    public boolean promptPassword(String message){ return true; }
+	    
+	    public void showMessage(String message){
+	      System.out.println(message);
+	    }
+	  }
 }
