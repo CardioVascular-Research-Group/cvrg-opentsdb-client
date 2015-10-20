@@ -77,7 +77,7 @@ public class TimeSeriesStorer {
 	//-CRJ 1 October, 2015
 	public static void deleteTimePoint(String urlString, String metric, long epochTime){}
 	
-	public static String deleteTimeSeries(String host, long startEpoch, long endEpoch, List<String> metrics, HashMap<String, String> tags, String user, String password){
+	public static String deleteTimeSeries(String host, long startEpoch, long endEpoch, List<String> metrics, HashMap<String, String> tags, String user, String password) throws OpenTSDBException{
 		StringBuilder command = new StringBuilder("/opt/opentsdb/build/tsdb scan --delete ");
 		
 		command.append(startEpoch).append(' ');

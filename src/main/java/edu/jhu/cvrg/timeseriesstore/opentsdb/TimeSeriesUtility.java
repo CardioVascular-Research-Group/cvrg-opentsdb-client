@@ -186,7 +186,7 @@ public class TimeSeriesUtility {
 		return array;
 	}
 	
-	protected static String executeSSHRemoteCommand(String host, String command, String user, String password){
+	protected static String executeSSHRemoteCommand(String host, String command, String user, String password) throws OpenTSDBException{
 		JSch jsch=new JSch();  
 		
 		StringBuilder sb = new StringBuilder();
@@ -229,9 +229,9 @@ public class TimeSeriesUtility {
 			
 			
 		} catch (JSchException e) {
-			e.printStackTrace();
+			throw new OpenTSDBException("Unable to connect to OpenTSDB host.", e);
 		} catch (IOException e) {
-			e.printStackTrace();
+			throw new OpenTSDBException("Unable to connect to OpenTSDB host.", e);
 		}
 		
 		return sb.toString();

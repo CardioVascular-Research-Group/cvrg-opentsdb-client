@@ -29,6 +29,7 @@ import org.junit.FixMethodOrder;
 import org.junit.Test;
 import org.junit.runners.MethodSorters;
 
+import edu.jhu.cvrg.timeseriesstore.exceptions.OpenTSDBException;
 import edu.jhu.cvrg.timeseriesstore.model.IncomingDataPoint;
 import edu.jhu.cvrg.timeseriesstore.opentsdb.AnnotationManager;
 import edu.jhu.cvrg.timeseriesstore.opentsdb.TimeSeriesRetriever;
@@ -95,7 +96,12 @@ public class AppTest extends TestCase
     	List<String> metrics = new ArrayList<String>();
     	metrics.add("ecg.applesauce.uv");
     	
-    	String out = TimeSeriesStorer.deleteTimeSeries(OPENTSDB_HOST, 1420088400L, 1420088401L, metrics, tags, "avilard4", "23ram24a@");
+    	String out = "";
+		try {
+			out = TimeSeriesStorer.deleteTimeSeries(OPENTSDB_HOST, 1420088400L, 1420088401L, metrics, tags, "avilard4", "23ram24a@");
+		} catch (OpenTSDBException e) {
+			e.printStackTrace();
+		}
     	
     	assertTrue( out.contains("exit-status: 0"));
     }

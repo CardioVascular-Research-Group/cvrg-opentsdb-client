@@ -25,6 +25,14 @@ public class OpenTSDBException extends Exception {
 	private static final long serialVersionUID = 1L;
 	public int responseCode = 0;
 	
+	public OpenTSDBException(String message) {
+		super(message);
+	}
+	
+	public OpenTSDBException(String message, Throwable cause) {
+		super(message, cause);
+	}
+	
 	public OpenTSDBException(int responseCode, String urlString, String dataPoint) throws IOException{
 		super("OpenTSDB Error. Code " + responseCode);
 		this.responseCode = responseCode;
