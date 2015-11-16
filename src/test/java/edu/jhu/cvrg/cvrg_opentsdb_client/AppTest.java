@@ -59,12 +59,16 @@ public class AppTest extends TestCase
     
     @Test
     public void test01InsertSingleDataPoint(){
-    	HashMap<String, String> tags = new HashMap<String,String>();
-    	tags.put("subjectId", "ncc1701applesauce");
-    	tags.put("format", "applesauce");
-    	IncomingDataPoint dataPoint = new IncomingDataPoint("ecg.applesauce.uv", 1420088400L, "16", tags);
-    	TimeSeriesStorer.storeTimePoint(OPENTSDB_URL, dataPoint);
-    	assertTrue(testRetrieveSingleDataPoint());
+    	try {
+			HashMap<String, String> tags = new HashMap<String,String>();
+			tags.put("subjectId", "ncc1701applesauce");
+			tags.put("format", "applesauce");
+			IncomingDataPoint dataPoint = new IncomingDataPoint("ecg.applesauce.uv", 1420088400L, "16", tags);
+			TimeSeriesStorer.storeTimePoint(OPENTSDB_URL, dataPoint);
+			assertTrue(testRetrieveSingleDataPoint());
+		} catch (OpenTSDBException e) {
+			e.printStackTrace();
+		}
     }
     
     public boolean testRetrieveSingleDataPoint(){
@@ -73,12 +77,16 @@ public class AppTest extends TestCase
     	int result = 0;
     	tags.put("subjectId", "ncc1701applesauce");
     	tags.put("format", "applesauce");
-    	JSONObject object = TimeSeriesRetriever.retrieveTimeSeries(OPENTSDB_URL, 1420088400L, 1420088401L, "ecg.applesauce.uv", tags);
+    	
     	try {
+    		JSONObject object = TimeSeriesRetriever.retrieveTimeSeries(OPENTSDB_URL, 1420088400L, 1420088401L, "ecg.applesauce.uv", tags);
 			JSONObject data = object.getJSONObject("dps");
 			System.out.println(object.toString());
 			result = data.getInt("1420088400");
 		} catch (JSONException e) {
+			e.printStackTrace();
+			return false;
+		} catch (OpenTSDBException e) {
 			e.printStackTrace();
 			return false;
 		}

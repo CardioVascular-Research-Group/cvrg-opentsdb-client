@@ -44,7 +44,7 @@ public class TimeSeriesRetriever{
 		return TimeSeriesUtility.findTsuid(urlString, tags, metric, startTime);
 	}
 	
-	public static JSONObject retrieveTimeSeries(String urlString, long startEpoch, long endEpoch, String metric, HashMap<String, String> tags){
+	public static JSONObject retrieveTimeSeries(String urlString, long startEpoch, long endEpoch, String metric, HashMap<String, String> tags) throws OpenTSDBException{
 		return retrieveTimeSeriesPOST(urlString, startEpoch, endEpoch, metric, tags);
 	}
 	      
@@ -52,7 +52,7 @@ public class TimeSeriesRetriever{
 		return retrieveTimeSeriesGET(urlString, startEpoch, endEpoch, metric, tags, showTSUIDs);
 	}
 	
-	private static JSONObject retrieveTimeSeriesPOST(String urlString, long startEpoch, long endEpoch, String metric, HashMap<String, String> tags){
+	private static JSONObject retrieveTimeSeriesPOST(String urlString, long startEpoch, long endEpoch, String metric, HashMap<String, String> tags) throws OpenTSDBException{
 		      
 		urlString = urlString + API_METHOD;
 		String result = "";
@@ -96,14 +96,11 @@ public class TimeSeriesRetriever{
 			result = TimeSeriesUtility.readHttpResponse(httpConnection);
 			
 		} catch (IOException e) {
-			e.printStackTrace();
-			return null;
-		} catch (OpenTSDBException e) {
-			result = String.valueOf(e.responseCode);
+			throw new OpenTSDBException("Unable to connect to server", e);
 		} catch (JSONException e) {
-			e.printStackTrace();
-			return null;
+			throw new OpenTSDBException("Error on request data", e);
 		}
+		
 		return TimeSeriesUtility.makeResponseJSONObject(result);
 	}
 	
