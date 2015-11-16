@@ -30,7 +30,7 @@ public class TimeSeriesStorer {
 
 	private static final String API_METHOD = "/api/put";
 	
-	public static void storeTimePoint(String urlString, IncomingDataPoint dataPoint){
+	public static void storeTimePoint(String urlString, IncomingDataPoint dataPoint) throws OpenTSDBException{
 		int responseCode = 0;
 		urlString = urlString + API_METHOD;
 		ArrayList<IncomingDataPoint> point = new ArrayList<IncomingDataPoint>();
@@ -41,13 +41,11 @@ public class TimeSeriesStorer {
 				throw new OpenTSDBException(responseCode, urlString, dataPoint.toString());
 			}
 		} catch (IOException e) {
-			e.printStackTrace();
-		} catch (OpenTSDBException e) {
-			e.printStackTrace();
-		}
+			throw new OpenTSDBException("Error to store the data point", e);
+		} 
 	}
 	
-	public static void storeTimePoints(String urlString, List<IncomingDataPoint> dataPoints){
+	public static void storeTimePoints(String urlString, List<IncomingDataPoint> dataPoints) throws OpenTSDBException{
 		int responseCode = 0;
 		urlString = urlString + API_METHOD;
 		
@@ -57,13 +55,11 @@ public class TimeSeriesStorer {
 				throw new OpenTSDBException(responseCode, urlString, dataPoints.toString());
 			}
 		} catch (IOException e) {
-			e.printStackTrace();
-		} catch (OpenTSDBException e) {
-			e.printStackTrace();
-		}
+			throw new OpenTSDBException("Error to store the data point list", e);
+		} 
 	}
 	
-	public static void storeTimePoint(String urlString, String metric, long epochTime, HashMap<String, String> tags){
+	public static void storeTimePoint(String urlString, String metric, long epochTime, HashMap<String, String> tags) throws OpenTSDBException{
 		urlString = urlString + API_METHOD;
 		IncomingDataPoint point = new IncomingDataPoint();
 		point.setMetric(metric);
