@@ -44,7 +44,7 @@ public class TimeSeriesRetriever{
 		return TimeSeriesUtility.findTsuid(urlString, tags, metric, startTime);
 	}
 	
-	public static JSONObject retrieveTimeSeries(String urlString, long startEpoch, long endEpoch, String metric, HashMap<String, String> tags) throws OpenTSDBException{
+	public static JSONArray retrieveTimeSeries(String urlString, long startEpoch, long endEpoch, String metric, HashMap<String, String> tags) throws OpenTSDBException{
 		return retrieveTimeSeriesPOST(urlString, startEpoch, endEpoch, metric, tags);
 	}
 	      
@@ -52,7 +52,7 @@ public class TimeSeriesRetriever{
 		return retrieveTimeSeriesGET(urlString, startEpoch, endEpoch, metric, tags, showTSUIDs);
 	}
 	
-	private static JSONObject retrieveTimeSeriesPOST(String urlString, long startEpoch, long endEpoch, String metric, HashMap<String, String> tags) throws OpenTSDBException{
+	private static JSONArray retrieveTimeSeriesPOST(String urlString, long startEpoch, long endEpoch, String metric, HashMap<String, String> tags) throws OpenTSDBException{
 		      
 		urlString = urlString + API_METHOD;
 		String result = "";
@@ -101,7 +101,7 @@ public class TimeSeriesRetriever{
 			throw new OpenTSDBException("Error on request data", e);
 		}
 		
-		return TimeSeriesUtility.makeResponseJSONObject(result);
+		return TimeSeriesUtility.makeResponseJSONArray(result);
 	}
 	
 	private static JSONObject retrieveTimeSeriesGET(String urlString, long startEpoch, long endEpoch, String metric, HashMap<String, String> tags, boolean showTSUIDs){
