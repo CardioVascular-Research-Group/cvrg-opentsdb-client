@@ -23,6 +23,7 @@ import java.util.List;
 
 import junit.framework.TestCase;
 
+import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 import org.junit.FixMethodOrder;
@@ -79,8 +80,9 @@ public class AppTest extends TestCase
     	tags.put("format", "applesauce");
     	
     	try {
-    		JSONObject object = TimeSeriesRetriever.retrieveTimeSeries(OPENTSDB_URL, 1420088400L, 1420088401L, "ecg.applesauce.uv", tags);
-			JSONObject data = object.getJSONObject("dps");
+    		JSONArray array = TimeSeriesRetriever.retrieveTimeSeries(OPENTSDB_URL, 1420088400L, 1420088401L, "ecg.applesauce.uv", tags);
+			JSONObject object = array.getJSONObject(0);
+    		JSONObject data = object.getJSONObject("dps");
 			System.out.println(object.toString());
 			result = data.getInt("1420088400");
 		} catch (JSONException e) {
