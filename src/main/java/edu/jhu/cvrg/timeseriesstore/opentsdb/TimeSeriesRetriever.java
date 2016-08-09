@@ -42,14 +42,14 @@ public class TimeSeriesRetriever{
 	
 	public static String findTsuid(String urlString, HashMap<String, String> tags, String metric, long startTime){
 		return TimeSeriesUtility.findTsuid(urlString, tags, metric, startTime);
-	}
-	
-	public static JSONArray retrieveTimeSeries(String urlString, long startEpoch, long endEpoch, String metric, HashMap<String, String> tags) throws OpenTSDBException{
-		return retrieveTimeSeriesPOST(urlString, startEpoch, endEpoch, metric, tags);
-	}
-	      
+	} 
+    
 	public static JSONObject retrieveTimeSeries(String urlString, long startEpoch, long endEpoch, String metric, HashMap<String, String> tags, boolean showTSUIDs){
 		return retrieveTimeSeriesGET(urlString, startEpoch, endEpoch, metric, tags, showTSUIDs);
+	}
+
+	public static JSONObject getDownsampledTimeSeries(String urlString, long startEpoch, long endEpoch, String metric, String downsample, HashMap<String, String> tags, boolean showTSUIDs){
+		return downsampledTimeseriesGet(urlString, startEpoch, endEpoch, metric, downsample, tags, showTSUIDs);
 	}
 	
 	private static JSONArray retrieveTimeSeriesPOST(String urlString, long startEpoch, long endEpoch, String metric, HashMap<String, String> tags) throws OpenTSDBException{
@@ -118,6 +118,55 @@ public class TimeSeriesRetriever{
 		builder.append("&show_tsuids=");
 		builder.append(showTSUIDs);
 		builder.append("&m=sum:");
+		builder.append(metric);
+		
+		if(tags != null){
+			builder.append("{");
+			
+			Iterator<Entry<String, String>> entries = tags.entrySet().iterator();
+			while (entries.hasNext()) {
+				@SuppressWarnings("rawtypes")
+				Map.Entry entry = (Map.Entry) entries.next();
+				builder.append((String)entry.getKey());
+				builder.append("=");
+				builder.append((String)entry.getValue());
+				if(entries.hasNext()){
+					builder.append(",");
+				}
+			}
+			builder.append("}");
+		}
+
+		try {
+			HttpURLConnection httpConnection = TimeSeriesUtility.openHTTPConnectionGET(urlString + builder.toString());
+			result = TimeSeriesUtility.readHttpResponse(httpConnection);
+		} catch (MalformedURLException e) {
+			e.printStackTrace();
+		} catch (IOException e) {
+			e.printStackTrace();
+		} catch (OpenTSDBException e) {
+			e.printStackTrace();
+			result = String.valueOf(e.responseCode);
+		}
+		return TimeSeriesUtility.makeResponseJSONObject(result);
+	}
+	
+	private static JSONObject downsampledTimeseriesGet(String urlString, long startEpoch, long endEpoch, String metric, String downsample, HashMap<String, String> tags, boolean showTSUIDs){
+	
+		urlString = urlString + API_METHOD;
+		String result = "";
+		
+		StringBuilder builder = new StringBuilder();
+		
+		builder.append("?start=");
+		builder.append(startEpoch);
+		builder.append("&end=");
+		builder.append(endEpoch);
+		builder.append("&show_tsuids=");
+		builder.append(showTSUIDs);
+		builder.append("&m=sum:");
+		builder.append(downsample);
+		builder.append(":");
 		builder.append(metric);
 		
 		if(tags != null){
