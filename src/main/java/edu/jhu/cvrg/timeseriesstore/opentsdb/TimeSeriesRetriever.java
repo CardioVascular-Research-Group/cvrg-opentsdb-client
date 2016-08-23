@@ -33,8 +33,9 @@ import org.json.JSONObject;
 import edu.jhu.cvrg.timeseriesstore.exceptions.OpenTSDBException;
 
 public class TimeSeriesRetriever{
-	
+
 	private static String API_METHOD = "/api/query/";
+	private static String API_SEARCH = "/api/search/lookup";
 	
 	public static String findTsuid(String urlString, HashMap<String, String> tags, String metric){
 		return findTsuid(urlString, tags, metric, TimeSeriesUtility.DEFAULT_START_TIME);
@@ -43,9 +44,38 @@ public class TimeSeriesRetriever{
 	public static String findTsuid(String urlString, HashMap<String, String> tags, String metric, long startTime){
 		return TimeSeriesUtility.findTsuid(urlString, tags, metric, startTime);
 	} 
-    
+
 	public static JSONObject retrieveTimeSeries(String urlString, long startEpoch, long endEpoch, String metric, HashMap<String, String> tags, boolean showTSUIDs){
 		return retrieveTimeSeriesGET(urlString, startEpoch, endEpoch, metric, tags, showTSUIDs);
+	}
+	
+	public static JSONArray getMetricList(String urlString, String subjectId){
+		String result = "";
+
+		urlString = urlString + API_SEARCH;
+
+		StringBuilder builder = new StringBuilder();
+		
+		builder.append("?m=*{subject_id=");
+		builder.append(subjectId);
+		builder.append("}&limit=20000");
+
+		try {
+			HttpURLConnection httpConnection = TimeSeriesUtility.openHTTPConnectionGET(urlString + builder.toString());
+			result = TimeSeriesUtility.readHttpResponse(httpConnection);
+		} catch (MalformedURLException e) {
+			e.printStackTrace();
+		} catch (IOException e) {
+			e.printStackTrace();
+		} catch (OpenTSDBException e) {
+			e.printStackTrace();
+			result = String.valueOf(e.responseCode);
+		}
+		JSONArray retRet = new JSONArray();
+		retRet = TimeSeriesUtility.makeResponseJSONArray(result);
+		//System.out.println("metricListGet result: " + retRet.toString());
+		return retRet;
+		
 	}
 
 	public static JSONObject getDownsampledTimeSeries(String urlString, long startEpoch, long endEpoch, String metric, String downsample, HashMap<String, String> tags, boolean showTSUIDs){
@@ -148,7 +178,10 @@ public class TimeSeriesRetriever{
 			e.printStackTrace();
 			result = String.valueOf(e.responseCode);
 		}
-		return TimeSeriesUtility.makeResponseJSONObject(result);
+		JSONObject retRet = new JSONObject();
+		retRet = TimeSeriesUtility.makeResponseJSONObject(result);
+		//System.out.println("timeSeriesGet result: " + retRet.toString());
+		return retRet;
 	}
 	
 	private static JSONObject downsampledTimeseriesGet(String urlString, long startEpoch, long endEpoch, String metric, String downsample, HashMap<String, String> tags, boolean showTSUIDs){
@@ -197,6 +230,7 @@ public class TimeSeriesRetriever{
 			e.printStackTrace();
 			result = String.valueOf(e.responseCode);
 		}
+		//System.out.println("downsampledTimeSeriesGet result: " + result);
 		return TimeSeriesUtility.makeResponseJSONObject(result);
 	}
 }

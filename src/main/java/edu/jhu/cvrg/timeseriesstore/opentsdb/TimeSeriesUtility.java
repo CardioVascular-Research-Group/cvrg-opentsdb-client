@@ -160,11 +160,17 @@ public class TimeSeriesUtility {
 	}
 	
 	protected static JSONObject makeResponseJSONObject(String data){
-	
+
+		StringBuilder shell = new StringBuilder();
+		if (!data.startsWith("[")){
+			shell.append("[" + data + "]");
+		}else{
+			shell.append(data);
+		}
 		JSONArray product = null;
 		JSONObject ret = null;
 		try{
-			product = new JSONArray(data);
+			product = new JSONArray(shell.toString());
 			ret = (JSONObject) product.get(0);
 		} catch (JSONException e){
 			e.printStackTrace();
