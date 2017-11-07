@@ -64,6 +64,7 @@ public class TimeSeriesRetriever{
 			JSONObject mainObject = new JSONObject();
 			mainObject.put("start", startEpoch);
 			mainObject.put("end", endEpoch);
+			mainObject.put("msResolution", true);
 			
 			JSONArray queryArray = new JSONArray();
 			
@@ -88,7 +89,7 @@ public class TimeSeriesRetriever{
 			
 			mainObject.put("queries", queryArray);
 			String queryString = mainObject.toString();
-			
+			System.out.println(queryString);
 			wr.write(queryString);
 			wr.flush();
 			wr.close();
